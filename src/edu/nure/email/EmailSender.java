@@ -1,13 +1,10 @@
 package edu.nure.email;
 
-/**
- * Created by bod on 17.09.15.
- */
+import edu.nure.Manager;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 
@@ -42,16 +39,14 @@ public class EmailSender {
 
                 try {
                     Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress("no+reply@photomanager.com", "Admin"));
+                    message.setFrom(new InternetAddress("Admin"));
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
                     message.setSubject(subject);
                     message.setText(text);
 
                     Transport.send(message);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
                 } catch (MessagingException ex){
-                    ex.printStackTrace();
+                    Manager.setLog(ex);
                 }
             }
         }).start();

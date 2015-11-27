@@ -5,7 +5,6 @@ import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.UserDAO;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.User;
-import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.math.BigInteger;
@@ -16,12 +15,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by bod on 11.11.15.
- */
 public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
 
     public UserDAOImpl(Connection connection) {
@@ -33,7 +30,12 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
         List<User> li = getAll(User.class, "WHERE `Phone`='"+login+"' and `Password`='"
                 +pass+"' AND `Password` IS NOT NULL");
 
-        return li.iterator().next();
+        Iterator<User> it = li.iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such user");
+        }
     }
 
     @Override
@@ -70,7 +72,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
 
     @Override
     public boolean setPassword(int id, String pass) throws DBException {
-        try (Connection c = connection; Statement s = connection.createStatement()){
+        try (Connection c = connection; Statement s = c.createStatement()){
             String sql = RequestPreparing.update("USER", new String[]{"Password"}, new Object[]{pass},
                     "`Id`="+id+" AND `Password` is NULL"
             );
