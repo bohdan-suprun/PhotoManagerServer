@@ -8,6 +8,7 @@ import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,8 +27,13 @@ public class FormatDAOImpl extends GenericDAOImpl<Format> implements FormatDAO {
 
     @Override
     public Format select(PrimaryKey key) throws SelectException {
-        return getAll(Format.class,
-                "WHERE `"+key.getName()+"`=\'" + key.getValue()+ "\'").iterator().next();
+        Iterator<Format> it =  getAll(Format.class,
+                "WHERE `"+key.getName()+"`=\'" + key.getValue()+ "\'").iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such element");
+        }
     }
 
     @Override

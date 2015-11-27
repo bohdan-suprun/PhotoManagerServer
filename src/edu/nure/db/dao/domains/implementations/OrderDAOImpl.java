@@ -6,6 +6,7 @@ import edu.nure.db.entity.Order;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,9 +34,14 @@ public class OrderDAOImpl extends GenericDAOImpl<Order> implements OrderDAO{
 
     @Override
     public Order select(PrimaryKey key) throws SelectException {
-        return getAll(Order.class,
+        Iterator<Order> it = getAll(Order.class,
                 "WHERE `"+key.getName()+"` = " + key.getValue() + " ORDER BY `Urg`"
-        ).iterator().next();
+        ).iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such element");
+        }
     }
 
     @Override

@@ -6,6 +6,7 @@ import edu.nure.db.entity.Stock;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,6 +27,11 @@ public class StockDAOImpl extends GenericDAOImpl<Stock> implements StockDAO {
 
     @Override
     public Stock select(PrimaryKey key) throws SelectException {
-        return getAll(Stock.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator().next();
+        Iterator<Stock> it =  getAll(Stock.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such element");
+        }
     }
 }

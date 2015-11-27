@@ -109,7 +109,12 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
 
     @Override
     public User select(PrimaryKey key) throws SelectException {
-        return getAll(User.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator().next();
+        Iterator<User> it =  getAll(User.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such user");
+        }
     }
 
     @Override

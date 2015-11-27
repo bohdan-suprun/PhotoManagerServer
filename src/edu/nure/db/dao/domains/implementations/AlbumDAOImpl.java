@@ -25,8 +25,14 @@ public class AlbumDAOImpl extends GenericDAOImpl<Album> implements AlbumDAO {
 
     @Override
     public Album select(PrimaryKey key) throws SelectException{
-        return getAll(Album.class, "WHERE `" + key.getName() + "` = "
-                + key.getValue() + " LIMIT 1").iterator().next();
+        Iterator<Album> a =  getAll(Album.class, "WHERE `" + key.getName() + "` = "
+                + key.getValue() + " LIMIT 1").iterator();
+        if (a.hasNext()){
+            return a.next();
+        } else {
+            throw new SelectException("No such element");
+        }
+
     }
 
     @Override

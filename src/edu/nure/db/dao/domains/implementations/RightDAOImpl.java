@@ -5,11 +5,9 @@ import edu.nure.db.entity.Right;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
+import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by bod on 11.11.15.
- */
 public class RightDAOImpl extends GenericDAOImpl<Right> {
 
     public RightDAOImpl(Connection connection) {
@@ -18,7 +16,12 @@ public class RightDAOImpl extends GenericDAOImpl<Right> {
 
     @Override
     public Right select(PrimaryKey key) throws SelectException {
-        return getAll(Right.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator().next();
+        Iterator<Right> it =  getAll(Right.class, "WHERE `" + key.getName() + "` = " + key.getValue()).iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such element");
+        }
     }
 
     @Override

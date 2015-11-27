@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -32,7 +33,12 @@ public class ImageDAOImpl extends GenericDAOImpl<Image> implements ImageDAO {
 
     @Override
     public Image select(PrimaryKey key) throws SelectException{
-        return getAll(Image.class, "Where `" + key.getName() + "`=" + key.getValue()).iterator().next();
+        Iterator<Image> it = getAll(Image.class, "Where `" + key.getName() + "`=" + key.getValue()).iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such element");
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import edu.nure.db.entity.Urgency;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -18,7 +19,12 @@ public class UrgencyDAOImpl extends GenericDAOImpl<Urgency> {
 
     @Override
     public Urgency select(PrimaryKey key) throws SelectException {
-        return getAll(Urgency.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator().next();
+        Iterator<Urgency> it = getAll(Urgency.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator();
+        if (it.hasNext()) {
+            return it.next();
+        } else {
+            throw new SelectException("No such element");
+        }
     }
 
     @Override
