@@ -15,8 +15,8 @@ public class EmailSender {
     private Properties props;
 
     public EmailSender() {
-        this.username = "ancobs@gmail.com";
-        this.password = "qwertyboddec2494";
+        this.username = "myemail";
+        this.password = "mypass";
         props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.socketFactory.port", "465");
