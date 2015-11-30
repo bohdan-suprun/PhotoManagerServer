@@ -14,7 +14,7 @@ import java.util.Date;
 /**
  * Created by bod on 17.09.15.
  */
-public class Image implements Transmittable{
+public class Image implements Transmittable {
     public static final int ID_NOT_SET = -1;
     private int id = ID_NOT_SET;
     private String hash;
@@ -22,7 +22,7 @@ public class Image implements Transmittable{
     private int album;
     private Date createdIn;
 
-    public Image(){
+    public Image() {
 
     }
 
@@ -33,15 +33,16 @@ public class Image implements Transmittable{
         setAlbum(album);
         setCreatedIn(createdIn);
     }
+
     @Override
     public void parseResultSet(ResultSet rs) throws DBException, ValidationException {
-        try{
+        try {
             setHash(rs.getString("Hash"));
             setId(rs.getInt("Id"));
             setImage(rs.getBytes("Image"));
             setAlbum(rs.getInt("Album"));
             setCreatedIn(rs.getDate("CreatedIn"));
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
     }
@@ -89,8 +90,8 @@ public class Image implements Transmittable{
 
     @Override
     public String toXML() {
-        return "<image id=\""+id+"\" hash=\""+hash+"\" album=\""
-                + album +"\" createdIn=\""+getCreatedIn()+"\"/>";
+        return "<image id=\"" + id + "\" hash=\"" + hash + "\" album=\""
+                + album + "\" createdIn=\"" + getCreatedIn() + "\"/>";
     }
 
     @Override
@@ -100,14 +101,15 @@ public class Image implements Transmittable{
                 "&album=" + album +
                 "&createdIn=" + getCreatedIn();
     }
-/*
-    public static Image getImageById(int id)throws ConnectException, SQLException, ValidationException{
-        ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                executeQuery(RequestPreparing.select("image", new String[]{"*"}, "WHERE Id = " + id));
-        rs.next();
-        return new Image(rs);
-    }
-*/
+
+    /*
+        public static Image getImageById(int id)throws ConnectException, SQLException, ValidationException{
+            ResultSet rs = Connector.getConnector().getConnection().createStatement().
+                    executeQuery(RequestPreparing.select("image", new String[]{"*"}, "WHERE Id = " + id));
+            rs.next();
+            return new Image(rs);
+        }
+    */
     public String[] getFields() {
         return new String[]{"Hash", "Album", "CreatedIn", "Image"};
     }

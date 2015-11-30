@@ -16,7 +16,7 @@ public class RightDAOImpl extends GenericDAOImpl<Right> {
 
     @Override
     public Right select(PrimaryKey key) throws SelectException {
-        Iterator<Right> it =  getAll(Right.class, "WHERE `" + key.getName() + "` = " + key.getValue()).iterator();
+        Iterator<Right> it = getAll(Right.class, "WHERE `" + key.getName() + "` = " + key.getValue()).iterator();
         if (it.hasNext()) {
             return it.next();
         } else {

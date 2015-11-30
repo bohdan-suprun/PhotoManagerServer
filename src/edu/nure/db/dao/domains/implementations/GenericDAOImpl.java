@@ -1,11 +1,12 @@
 package edu.nure.db.dao.domains.implementations;
 
 import edu.nure.db.RequestPreparing;
-import edu.nure.db.dao.exceptions.SelectException;
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.GenericDAO;
+import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.exceptions.InsertException;
+import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.DBEntity;
+import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
@@ -15,9 +16,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by bod on 11.11.15.
- */
 abstract public class GenericDAOImpl<T extends DBEntity> implements GenericDAO<T> {
 
     protected Connection connection;
@@ -28,23 +26,23 @@ abstract public class GenericDAOImpl<T extends DBEntity> implements GenericDAO<T
 
     @Override
     public T insert(T ent) throws DBException {
-        try (Statement s = connection.createStatement()){
+        try (Statement s = connection.createStatement()) {
             String sql = RequestPreparing.insert(ent.entityName(), ent.getFields(), ent.getValues());
             connection.setAutoCommit(false);
             int n = s.executeUpdate(sql);
-            if (n != 1 ){
+            if (n != 1) {
                 throw new InsertException("Произошла ошибка во время добавления данных: ничего не добавлено");
             }
             T last = getLastInserted(ent, s);
             connection.commit();
             return last;
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex);
         } finally {
             try {
                 connection.setAutoCommit(true);
                 connection.close();
-            } catch (SQLException ex){
+            } catch (SQLException ex) {
                 throw new DBException(ex);
             }
         }
@@ -55,27 +53,27 @@ abstract public class GenericDAOImpl<T extends DBEntity> implements GenericDAO<T
             T last = (T) tClass.getClass().newInstance();
             PrimaryKey pk = last.getPrimaryKey();
             String sql = RequestPreparing.select(last.entityName(), new String[]{"*"},
-                    "WHERE `"+pk.getName()+"`= (Select Max("+ pk.getName() +") From `"+RequestPreparing.DB_NAME+"`.`"
-                            +last.entityName()+"`)"
+                    "WHERE `" + pk.getName() + "`= (Select Max(" + pk.getName() + ") From `" + RequestPreparing.DB_NAME + "`.`"
+                            + last.entityName() + "`)"
             );
             ResultSet rs = s.executeQuery(sql);
-            while (rs.next()){
+            while (rs.next()) {
                 last.parseResultSet(rs);
             }
             return last;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new SelectException(ex);
         }
     }
 
     @Override
     public boolean update(T ent, PrimaryKey key) throws DBException {
-        try (Connection c = connection; Statement s = c.createStatement()){
+        try (Connection c = connection; Statement s = c.createStatement()) {
             String sql = RequestPreparing.update(ent.entityName(), ent.getFields(), ent.getValues(),
-                    key.getName() + " = "+key.getValue());
-            int n =s.executeUpdate(sql);
+                    key.getName() + " = " + key.getValue());
+            int n = s.executeUpdate(sql);
             return n > 0;
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex);
         }
     }
@@ -86,31 +84,57 @@ abstract public class GenericDAOImpl<T extends DBEntity> implements GenericDAO<T
     }
 
     @Override
+    public T updatePrevious(T ent) throws DBException {
+        try (Connection c = connection; Statement s = c.createStatement()) {
+            PrimaryKey key = ent.getPrimaryKey();
+            String sql = RequestPreparing.select(ent.entityName(), new String[]{"*"}, key);
+            ResultSet rs = s.executeQuery(sql);
+            T res = (T) ent.getClass().newInstance();
+            if (rs.next()) {
+                res.parseResultSet(rs);
+            } else {
+                throw new SelectException("Нет записи с таким ключем");
+            }
+            sql = RequestPreparing.update(ent.entityName(), ent.getFields(), ent.getValues(),
+                    key.getName() + " = " + key.getValue());
+            int n = s.executeUpdate(sql);
+            if (n < 1) {
+                throw new InsertException("Ошибка во время изменения записи");
+            }
+            return res;
+        } catch (SQLException | ValidationException ex) {
+            throw new DBException(ex);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new InsertException("Во время выполнения произошла внутренняя ошибка сервера");
+        }
+    }
+
+    @Override
     public boolean delete(T ent) throws DBException {
         return delete(ent.entityName(), ent.getPrimaryKey());
     }
 
     @Override
-    public boolean delete(String entityName,PrimaryKey key) throws DBException {
-        try (Connection c = connection; Statement s = c.createStatement()){
-            if (entityName == null || entityName.isEmpty() || entityName.contains("'")){
+    public boolean delete(String entityName, PrimaryKey key) throws DBException {
+        try (Connection c = connection; Statement s = c.createStatement()) {
+            if (entityName == null || entityName.isEmpty() || entityName.contains("'")) {
                 throw new SQLException("Unreachable entity name");
             }
-            String sql = "DELETE FROM `"+RequestPreparing.DB_NAME+"`.`"+entityName+"` WHERE "+key.getName()+"="+key.getValue();
+            String sql = "DELETE FROM `" + RequestPreparing.DB_NAME + "`.`" + entityName + "` WHERE " + key.getName() + "=" + key.getValue();
             int n = s.executeUpdate(sql);
             return n > 0;
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex);
         }
     }
 
     @Override
-    public List<T> selectAll() throws SelectException{
+    public List<T> selectAll() throws SelectException {
         throw new UnsupportedOperationException();
     }
 
     protected List<T> getAll(Class<T> tClass, String cond) throws SelectException {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         try (Connection c = connection; Statement s = c.createStatement()) {
             T inst = tClass.newInstance();
             String sql = RequestPreparing.select(inst.entityName(), new String[]{"*"}, cond);

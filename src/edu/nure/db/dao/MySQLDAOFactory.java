@@ -1,6 +1,5 @@
 package edu.nure.db.dao;
 
-import edu.nure.db.MyDataSource;
 import edu.nure.db.dao.domains.implementations.*;
 import edu.nure.db.dao.domains.interfaces.*;
 import edu.nure.db.dao.exceptions.DBException;
@@ -23,57 +22,57 @@ public class MySQLDAOFactory implements DAOFactory {
     public MySQLDAOFactory() throws DBException {
         try {
             Context init = new InitialContext();
-            dataSource = (DataSource)init.lookup("java:/comp/env/jdbc/pdb");
-        } catch (Exception ex){
+            dataSource = (DataSource) init.lookup("java:/comp/env/jdbc/pdb");
+        } catch (Exception ex) {
             throw new DBException(ex);
         }
     }
 
     @Override
-    public AlbumDAO getAlbumDAO() throws DBException{
+    public AlbumDAO getAlbumDAO() throws DBException {
         return new AlbumDAOImpl(getConnection());
     }
 
     @Override
-    public FormatDAO getFormatDAO() throws DBException{
+    public FormatDAO getFormatDAO() throws DBException {
         return new FormatDAOImpl(getConnection());
     }
 
     @Override
-    public ImageDAO getImageDAO() throws DBException{
+    public ImageDAO getImageDAO() throws DBException {
         return new ImageDAOImpl(getConnection());
     }
 
     @Override
-    public OrderDAO getOrderDAO() throws DBException{
+    public OrderDAO getOrderDAO() throws DBException {
         return new OrderDAOImpl(getConnection());
     }
 
     @Override
-    public GenericDAO<Right> getRightDAO() throws DBException{
+    public GenericDAO<Right> getRightDAO() throws DBException {
         return new RightDAOImpl(getConnection());
     }
 
     @Override
-    public StockDAO getStockDAO() throws DBException{
+    public StockDAO getStockDAO() throws DBException {
         return new StockDAOImpl(getConnection());
     }
 
     @Override
-    public GenericDAO<Urgency> getUrgencyDAO() throws DBException{
+    public GenericDAO<Urgency> getUrgencyDAO() throws DBException {
         return new UrgencyDAOImpl(getConnection());
     }
 
     @Override
-    public UserDAO getUserDAO() throws DBException{
+    public UserDAO getUserDAO() throws DBException {
         return new UserDAOImpl(getConnection());
     }
 
     @Override
-    public Connection getConnection() throws DBException{
+    public Connection getConnection() throws DBException {
         try {
             return dataSource.getConnection();
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex);
         }
     }

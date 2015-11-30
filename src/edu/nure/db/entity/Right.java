@@ -12,15 +12,15 @@ import java.util.Objects;
 /**
  * Created by bod on 17.09.15.
  */
-public class Right implements Transmittable{
+public class Right implements Transmittable {
     private String type, desc;
 
-    public Right(String type, String desc){
+    public Right(String type, String desc) {
         setType(type);
         setDesc(desc);
     }
 
-    public Right(){
+    public Right() {
 
     }
 
@@ -28,13 +28,13 @@ public class Right implements Transmittable{
         try {
             setType(rs.getString("Type"));
             setDesc(rs.getString("Desc"));
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
 
     }
 
-    public Right(HttpServletRequest req){
+    public Right(HttpServletRequest req) {
         setType(req.getParameter("type"));
         setDesc(req.getParameter("desc"));
     }
@@ -48,20 +48,20 @@ public class Right implements Transmittable{
     }
 
     public String getDesc() {
-        if(desc != null)
+        if (desc != null)
             desc = desc.replace('"', '\'');
         return desc;
     }
 
     public void setDesc(String desc) {
-        if(desc != null)
+        if (desc != null)
             desc = desc.replace('\'', '"');
         this.desc = desc;
     }
 
     @Override
     public String toXML() {
-        return "<right type=\""+type +"\""+((desc == null)?"":" desc=\""+desc+"\"")+"/>";
+        return "<right type=\"" + type + "\"" + ((desc == null) ? "" : " desc=\"" + desc + "\"") + "/>";
     }
 
     @Override

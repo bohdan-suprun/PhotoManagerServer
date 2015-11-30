@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * Created by bod on 07.10.15.
  */
-public class Album implements Transmittable{
+public class Album implements Transmittable {
     private String name;
     private int id;
     private int userId;
@@ -21,17 +21,18 @@ public class Album implements Transmittable{
         this.id = id;
         this.userId = userId;
     }
-    public Album(){
+
+    public Album() {
 
     }
 
     @Override
-    public void parseResultSet(ResultSet rs) throws DBException{
+    public void parseResultSet(ResultSet rs) throws DBException {
         try {
             this.name = rs.getString("Name");
             this.id = rs.getInt("Id");
             this.userId = rs.getInt("UserId");
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
     }
@@ -39,7 +40,8 @@ public class Album implements Transmittable{
     public Album(ResponseBuilder rs) {
         this.name = rs.getParameter("name");
         this.id = rs.getIntParameter("id");
-        this.userId = rs.getIntParameter("userId");;
+        this.userId = rs.getIntParameter("userId");
+        ;
     }
 
     public String getName() {
@@ -68,15 +70,15 @@ public class Album implements Transmittable{
 
     @Override
     public String toXML() {
-        return "<album name=\""+name.replace("\"", "'")+"\" id = \""+id+"\" userId=\""+userId+"\"/>";
+        return "<album name=\"" + name.replace("\"", "'") + "\" id = \"" + id + "\" userId=\"" + userId + "\"/>";
     }
 
     @Override
     public String toQuery() {
-        return "name="+name.replace("\"", "'")+"&id = "+id+"&userId="+userId;
+        return "name=" + name.replace("\"", "'") + "&id = " + id + "&userId=" + userId;
     }
 
-    public String[] getFields(){
+    public String[] getFields() {
         return new String[]{"Name", "UserId"};
     }
 

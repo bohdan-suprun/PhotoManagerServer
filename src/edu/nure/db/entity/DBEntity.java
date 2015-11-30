@@ -11,8 +11,12 @@ import java.sql.ResultSet;
  */
 public interface DBEntity {
     String[] getFields();
+
     Object[] getValues();
+
     void parseResultSet(ResultSet rs) throws DBException, ValidationException;
+
     String entityName();
+
     PrimaryKey getPrimaryKey();
 }

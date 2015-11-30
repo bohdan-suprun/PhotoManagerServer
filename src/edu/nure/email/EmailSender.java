@@ -15,8 +15,8 @@ public class EmailSender {
     private Properties props;
 
     public EmailSender() {
-        this.username = "myemail";
-        this.password = "mypassword";
+        this.username = "ancobs@gmail.com";
+        this.password = "qwertyboddec2494";
         props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.socketFactory.port", "465");
@@ -27,7 +27,7 @@ public class EmailSender {
 
     }
 
-    public void send(final String subject, final String text, final String toEmail){
+    public void send(final String subject, final String text, final String toEmail) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -45,7 +45,7 @@ public class EmailSender {
                     message.setText(text);
 
                     Transport.send(message);
-                } catch (MessagingException ex){
+                } catch (MessagingException ex) {
                     Manager.setLog(ex);
                 }
             }

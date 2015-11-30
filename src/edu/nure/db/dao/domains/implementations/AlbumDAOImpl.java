@@ -1,16 +1,13 @@
 package edu.nure.db.dao.domains.implementations;
 
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.AlbumDAO;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.Album;
 import edu.nure.db.entity.Image;
-import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
@@ -24,10 +21,10 @@ public class AlbumDAOImpl extends GenericDAOImpl<Album> implements AlbumDAO {
     }
 
     @Override
-    public Album select(PrimaryKey key) throws SelectException{
-        Iterator<Album> a =  getAll(Album.class, "WHERE `" + key.getName() + "` = "
+    public Album select(PrimaryKey key) throws SelectException {
+        Iterator<Album> a = getAll(Album.class, "WHERE `" + key.getName() + "` = "
                 + key.getValue() + " LIMIT 1").iterator();
-        if (a.hasNext()){
+        if (a.hasNext()) {
             return a.next();
         } else {
             throw new SelectException("No such element");
@@ -41,12 +38,11 @@ public class AlbumDAOImpl extends GenericDAOImpl<Album> implements AlbumDAO {
     }
 
     @Override
-    public List<Album> getUserAlbum(int userId) throws SelectException{
+    public List<Album> getUserAlbum(int userId) throws SelectException {
         return getAll(Album.class, "WHERE UserId = " + userId + " Order by Name");
     }
 
     /**
-     *
      * @param userId
      * @return users albums and images in the album
      */
@@ -60,7 +56,7 @@ public class AlbumDAOImpl extends GenericDAOImpl<Album> implements AlbumDAO {
                             " Where `UserId` = " + userId +
                             " Group by `Name`, i.`Id`, `Album`"
             );
-            while (rs.next()){
+            while (rs.next()) {
                 Album album = new Album(
                         rs.getString("Name"),
                         rs.getInt("aId"),
@@ -69,7 +65,7 @@ public class AlbumDAOImpl extends GenericDAOImpl<Album> implements AlbumDAO {
                 Image image = new Image();
                 image.parseResultSet(rs);
                 List<Image> albumImages = result.get(album);
-                if (albumImages == null){
+                if (albumImages == null) {
                     albumImages = new ArrayList<Image>();
                 }
                 albumImages.add(image);

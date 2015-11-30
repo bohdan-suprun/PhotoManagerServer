@@ -1,4 +1,5 @@
 package edu.nure.db.entity;
+
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.entity.constraints.MoreOrEq;
 import edu.nure.db.entity.constraints.ValidationException;
@@ -25,10 +26,10 @@ public class Urgency implements Transmittable {
 
     public void setTerm(int term) throws ValidationException {
         Date now = new Date();
-        Date inTerm = new Date(now.getTime()+term*TO_MS);
-        if(inTerm.after(now)) {
+        Date inTerm = new Date(now.getTime() + term * TO_MS);
+        if (inTerm.after(now)) {
             this.term = term;
-        }else throw new ValidationException("Bad term");
+        } else throw new ValidationException("Bad term");
     }
 
     public double getFactor() {
@@ -36,10 +37,10 @@ public class Urgency implements Transmittable {
     }
 
     public void setFactor(double factor) throws ValidationException {
-        this.factor = (Double)Validator.validate(factor, new MoreOrEq<Double>(0.0));
+        this.factor = (Double) Validator.validate(factor, new MoreOrEq<Double>(0.0));
     }
 
-    public Urgency(){
+    public Urgency() {
 
     }
 
@@ -53,7 +54,7 @@ public class Urgency implements Transmittable {
         try {
             setTerm(rs.getInt("Term"));
             setFactor(rs.getFloat("Factor"));
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
     }
@@ -62,21 +63,22 @@ public class Urgency implements Transmittable {
         try {
             setTerm(req.getIntParameter("term"));
             setFactor(req.getDoubleParameter("factor"));
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             throw new ValidationException();
         }
     }
-/*
-    public static Urgency getUrgencyByTerm(int term) throws ConnectException, SQLException, ValidationException {
-        ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                executeQuery(RequestPreparing.select("urgency", new String[]{"*"}, "WHERE Term = " + term));
-        rs.next();
-        return new Urgency(rs);
-    }
-*/
+
+    /*
+        public static Urgency getUrgencyByTerm(int term) throws ConnectException, SQLException, ValidationException {
+            ResultSet rs = Connector.getConnector().getConnection().createStatement().
+                    executeQuery(RequestPreparing.select("urgency", new String[]{"*"}, "WHERE Term = " + term));
+            rs.next();
+            return new Urgency(rs);
+        }
+    */
     @Override
     public String toXML() {
-        return "<urgency term=\""+term+"\" factor=\""+factor+"\"/>";
+        return "<urgency term=\"" + term + "\" factor=\"" + factor + "\"/>";
     }
 
     @Override

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 /**
  * Created by bod on 17.09.15.
  */
-public class Stock implements Transmittable{
+public class Stock implements Transmittable {
     public static final int ID_NOT_SET = -1;
     private int id = ID_NOT_SET;
     private int order;
@@ -20,11 +20,11 @@ public class Stock implements Transmittable{
     private String desc;
     private String format;
 
-    public Stock(){
+    public Stock() {
 
     }
 
-    public Stock(int id, int order, int image, String desc, String format){
+    public Stock(int id, int order, int image, String desc, String format) {
         setId(id);
         setDesc(desc);
         setOrder(order);
@@ -33,14 +33,14 @@ public class Stock implements Transmittable{
     }
 
     @Override
-    public void parseResultSet(ResultSet rs) throws DBException, ValidationException{
+    public void parseResultSet(ResultSet rs) throws DBException, ValidationException {
         try {
             setId(rs.getInt("Id"));
             setDesc(rs.getString("Desc"));
             setOrder(rs.getInt("Id_order"));
             setImage(rs.getInt("Image"));
             setFormat(rs.getString("Format"));
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
     }
@@ -48,15 +48,15 @@ public class Stock implements Transmittable{
     public Stock(ResponseBuilder req) throws ValidationException {
         try {
             String id = req.getParameter("id");
-            if(id == null)
+            if (id == null)
                 setId(ID_NOT_SET);
-            else    setId(Integer.valueOf(id));
+            else setId(Integer.valueOf(id));
 
             setDesc(req.getParameter("desc"));
             setOrder(req.getIntParameter("order"));
             setImage(req.getIntParameter("image"));
             setFormat(req.getParameter("format"));
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             throw new ValidationException("Неверный формат данных");
         }
     }
@@ -90,7 +90,7 @@ public class Stock implements Transmittable{
     }
 
     public void setDesc(String desc) {
-        if(desc != null)
+        if (desc != null)
             desc = desc.replace('\'', '"');
         this.desc = desc;
     }
@@ -105,9 +105,9 @@ public class Stock implements Transmittable{
 
     @Override
     public String toXML() {
-        return "<stock id=\""+id+"\" order=\""+order+"\" image=\""+image+"\" "+((desc == null)?"":"desc=\""
-                +desc.replace('"', '\'')+"\"")
-                +" format=\"" + format.replace('"', '\'')+"\"/>";
+        return "<stock id=\"" + id + "\" order=\"" + order + "\" image=\"" + image + "\" " + ((desc == null) ? "" : "desc=\""
+                + desc.replace('"', '\'') + "\"")
+                + " format=\"" + format.replace('"', '\'') + "\"/>";
     }
 
     @Override
@@ -115,8 +115,8 @@ public class Stock implements Transmittable{
         return "id=" + id +
                 "&order=" + order +
                 "&image=" + image +
-                ((desc == null)?"":"&desc=\""
-                        +desc.replace('"', '\'')+"\"")+
+                ((desc == null) ? "" : "&desc=\""
+                        + desc.replace('"', '\'') + "\"") +
                 "&format=" + format;
     }
 

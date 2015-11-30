@@ -12,30 +12,30 @@ import java.util.List;
 /**
  * Created by bod on 11.11.15.
  */
-public class OrderDAOImpl extends GenericDAOImpl<Order> implements OrderDAO{
+public class OrderDAOImpl extends GenericDAOImpl<Order> implements OrderDAO {
 
     public OrderDAOImpl(Connection connection) {
         super(connection);
     }
 
     @Override
-    public List<Order> getByResponsible(int respId) throws SelectException{
+    public List<Order> getByResponsible(int respId) throws SelectException {
         return getAll(Order.class,
                 "WHERE `Responsible` = " + respId + " ORDER BY `Urg`"
         );
     }
 
     @Override
-    public List<Order> getByCustomer(int customerId) throws SelectException{
+    public List<Order> getByCustomer(int customerId) throws SelectException {
         return getAll(Order.class,
-                "WHERE `Customer` = "+customerId+" ORDER BY `Urg`"
+                "WHERE `Customer` = " + customerId + " ORDER BY `Urg`"
         );
     }
 
     @Override
     public Order select(PrimaryKey key) throws SelectException {
         Iterator<Order> it = getAll(Order.class,
-                "WHERE `"+key.getName()+"` = " + key.getValue() + " ORDER BY `Urg`"
+                "WHERE `" + key.getName() + "` = " + key.getValue() + " ORDER BY `Urg`"
         ).iterator();
         if (it.hasNext()) {
             return it.next();
@@ -45,14 +45,14 @@ public class OrderDAOImpl extends GenericDAOImpl<Order> implements OrderDAO{
     }
 
     @Override
-    public List<Order> getActiveByResponsible(int respId) throws SelectException{
+    public List<Order> getActiveByResponsible(int respId) throws SelectException {
         return getAll(Order.class,
                 "WHERE `Responsible` = " + respId + " AND `Status` = 1 ORDER BY `Urg`"
         );
     }
 
     @Override
-    public List<Order> getActiveByCustomer(int customerId) throws SelectException{
+    public List<Order> getActiveByCustomer(int customerId) throws SelectException {
         return getAll(Order.class,
                 "WHERE `Customer` = " + customerId + " AND `Status` = 1 ORDER BY `Urg`"
         );

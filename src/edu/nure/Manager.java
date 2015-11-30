@@ -3,14 +3,13 @@ package edu.nure;
 
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.performers.*;
-import edu.nure.performers.exceptions.PerformException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -37,11 +36,11 @@ public class Manager extends HttpServlet {
             int action = Integer.valueOf(Objects.requireNonNull(req.getParameter("action")));
             builder = new ResponseBuilder(req, action);
             builder.setContentType(ResponseBuilder.XML_TYPE);
-            if(action == Action.LOGIN){
+            if (action == Action.LOGIN) {
                 p = new LoginPerformer(builder);
                 p.perform();
-            }else {
-                if(!checkHiRight(req.getSession())) throw new AccessDeniedException("Ошибка прав доступа");
+            } else {
+                if (!checkHiRight(req.getSession())) throw new AccessDeniedException("Ошибка прав доступа");
                 switch (action) {
                     case Action.REGISTRY:
                         p = new UserPerformer(builder);
@@ -60,7 +59,7 @@ public class Manager extends HttpServlet {
                         builder.setStatus(ResponseBuilder.STATUS_OK);
                         break;
 
-                        //Format
+                    //Format
                     case Action.INSERT_FORMAT:
                         p = new FormatPerformer(builder);
                         p.perform();
@@ -88,7 +87,7 @@ public class Manager extends HttpServlet {
                         p.perform();
                         break;
                     case Action.DELETE_ALBUM:
-                        p =new AlbumPerformer(builder);
+                        p = new AlbumPerformer(builder);
                         p.perform();
                         break;
 
@@ -136,7 +135,7 @@ public class Manager extends HttpServlet {
 
                     //Stock
                     case Action.INSERT_STOCK:
-                        p = new StockPerformer(builder) ;
+                        p = new StockPerformer(builder);
                         p.perform();
                         break;
                     case Action.GET_STOCK:
@@ -157,15 +156,15 @@ public class Manager extends HttpServlet {
 
                 }
             }
-        } catch (DBException ex){
+        } catch (DBException ex) {
             String message = ex.getMessage().toLowerCase();
-            if (message.contains("comm")){
+            if (message.contains("comm")) {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
                 builder.setText("Сервер Баз Данных не отвечает");
             } else if (message.contains("syntax")) {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
                 builder.setText("Ошибка синтаксиса запроса к базе данных");
-            } else{
+            } else {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
                 builder.setText("Неизвестная ошибка при обращении к базе данных");
             }
@@ -184,15 +183,16 @@ public class Manager extends HttpServlet {
         doGet(req, resp);
     }
 
-    public static boolean checkHiRight(HttpSession session){
-        if(session.getAttribute("id") != null){
-            if(session.getAttribute("right").equals("фотограф") ||
+    public static boolean checkHiRight(HttpSession session) {
+        if (session.getAttribute("id") != null) {
+            if (session.getAttribute("right").equals("фотограф") ||
                     session.getAttribute("right").equals("su"))
                 return true;
         }
         return false;
     }
-    public static boolean checkLowRight(HttpSession session){
+
+    public static boolean checkLowRight(HttpSession session) {
         return session.getAttribute("id") != null;
     }
 }

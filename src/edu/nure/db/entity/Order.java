@@ -14,10 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by bod on 17.09.15.
- */
-public class Order implements Transmittable{
+public class Order implements Transmittable {
 
     private static final int ID_NOT_SET = -1;
     private int id = ID_NOT_SET;
@@ -36,7 +33,7 @@ public class Order implements Transmittable{
         this.status = status;
     }
 
-    public Order(){
+    public Order() {
 
     }
 
@@ -51,7 +48,7 @@ public class Order implements Transmittable{
             setForPay(forPay);
             setStatus(status);
             setUrgency(urg);
-        }catch (ParseException ex){
+        } catch (ParseException ex) {
             throw new ValidationException();
         }
 
@@ -68,16 +65,16 @@ public class Order implements Transmittable{
             setForPay(rs.getDouble("For_pay"));
             setStatus(rs.getInt("Status"));
             setUrgency(rs.getInt("Urg"));
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
-        } catch (ParseException ex){
+        } catch (ParseException ex) {
             throw new ValidationException("Невозможно преобразовать дату заказа");
         }
     }
 
     public Order(ResponseBuilder req) throws ValidationException {
         String id = req.getParameter("id");
-        if(id !=null)
+        if (id != null)
             setId(Integer.valueOf(id));
         else
             setId(ID_NOT_SET);
@@ -89,9 +86,9 @@ public class Order implements Transmittable{
             setForPay(req.getDoubleParameter("forPay"));
             setUrgency(req.getIntParameter("urgency"));
             setStatus(req.getIntParameter("status"));
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             throw new ValidationException("Невозможно преобразовать параметер в число");
-        } catch (ParseException ex){
+        } catch (ParseException ex) {
             throw new ValidationException("Невозможно преобразовать дату заказа");
         }
     }
@@ -125,8 +122,8 @@ public class Order implements Transmittable{
     }
 
     public void setDesc(String desc) {
-        if(desc != null)
-            desc = desc.replace('\'','"');
+        if (desc != null)
+            desc = desc.replace('\'', '"');
         this.desc = desc;
     }
 
@@ -135,7 +132,7 @@ public class Order implements Transmittable{
     }
 
     public void setForPay(double forPay) throws ValidationException {
-        this.forPay = (Double)Validator.validate(forPay, new MoreOrEq<Double>(0.));
+        this.forPay = (Double) Validator.validate(forPay, new MoreOrEq<>(0.));
     }
 
     public int getUrgency() {
@@ -156,10 +153,10 @@ public class Order implements Transmittable{
 
     @Override
     public String toXML() {
-        return "<order id=\""+id+"\" customer=\""+customer+"\" responsible=\""+responsible+"\""+
-                ((desc == null)?"":" desc=\""+desc.replace('"','\'')+"\"")+" term=\""+
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(term)+"\" for_pay=\""+forPay+"\" status=\""+
-                status+"\" urgency=\""+urgency+"\"/>";
+        return "<order id=\"" + id + "\" customer=\"" + customer + "\" responsible=\"" + responsible + "\"" +
+                ((desc == null) ? "" : " desc=\"" + desc.replace('"', '\'') + "\"") + " term=\"" +
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(term) + "\" for_pay=\"" + forPay + "\" status=\"" +
+                status + "\" urgency=\"" + urgency + "\"/>";
     }
 
     @Override
@@ -169,14 +166,14 @@ public class Order implements Transmittable{
                 "&responsible=" + responsible +
                 "&desc='" + getDesc() + '\'' +
                 "&term=" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(term) +
-                "&forPay=" + forPay+
-                "&status=" + status+
+                "&forPay=" + forPay +
+                "&status=" + status +
                 "&urgency=" + urgency;
     }
 
     public String[] getFields() {
         return new String[]{"Customer", "Responsible", "Desc", "Term", "For_pay",
-        "Status", "Urg"};
+                "Status", "Urg"};
     }
 
     @Override

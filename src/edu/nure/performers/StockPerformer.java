@@ -2,8 +2,9 @@ package edu.nure.performers;
 
 import edu.nure.Manager;
 import edu.nure.db.dao.AbstractDAOFactory;
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.StockDAO;
+import edu.nure.db.dao.exceptions.DBException;
+import edu.nure.db.dao.exceptions.InsertException;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.Stock;
 import edu.nure.db.entity.constraints.ValidationException;
@@ -13,9 +14,6 @@ import edu.nure.performers.exceptions.PerformException;
 import java.io.IOException;
 import java.util.Objects;
 
-/**
- * Created by bod on 24.09.15.
- */
 public class StockPerformer extends AbstractPerformer {
 
     private StockDAO dao;
@@ -49,24 +47,24 @@ public class StockPerformer extends AbstractPerformer {
     @Override
     protected void doGet() throws PerformException, IOException {
         try {
-            String order =  builder.getParameter("order");
+            String order = builder.getParameter("order");
             String id = builder.getParameter("id");
-            if(order != null) {
-                for (Stock stock: dao.getStock(Integer.valueOf(order))){
+            if (order != null) {
+                for (Stock stock : dao.getStock(Integer.valueOf(order))) {
                     builder.add(stock);
                 }
                 builder.setStatus(ResponseBuilder.STATUS_OK);
             }
-            if(id != null){
+            if (id != null) {
                 Stock stock = Objects.requireNonNull(dao.select(new IntegerPrimaryKey(Integer.valueOf(id))));
                 builder.add(stock);
                 builder.setStatus(ResponseBuilder.STATUS_OK);
             }
-        } catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             throw new PerformException("Неверный формат данных");
-        } catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             throw new PerformException("Заказа с таким номером не существует");
-        } catch (SelectException ex){
+        } catch (SelectException ex) {
             Manager.setLog(ex);
             throw new PerformException("Ошибка во время работы с базой данных");
         }
@@ -77,21 +75,25 @@ public class StockPerformer extends AbstractPerformer {
         try {
             Stock stock = new Stock(builder);
             stock = dao.insert(stock);
-            if(stock != null) {
+            if (stock != null) {
                 builder.add(stock);
                 builder.setStatus(ResponseBuilder.STATUS_OK);
             } else {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
                 builder.setText("Неудалось добавить задание");
             }
+        } catch (InsertException ex) {
+            Manager.setLog(ex);
+            builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
+            builder.setText(ex.getMessage());
         } catch (DBException e) {
             Manager.setLog(e);
             String mes = e.getMessage().toLowerCase();
             if (mes.contains("foreign key")) {
                 throw new PerformException("Поля Заказ, Изображение и Формат должны быть выбраны с поля");
-            } else if (mes.contains("inactive")){
+            } else if (mes.contains("inactive")) {
                 throw new PerformException("Невозможно добавить задание для неактивного заказа");
-            } else{
+            } else {
                 throw new PerformException("Ошибка обработки запроса");
             }
         } catch (ValidationException e) {
@@ -103,20 +105,24 @@ public class StockPerformer extends AbstractPerformer {
     protected void doUpdate() throws PerformException, IOException {
         try {
             Stock stock = new Stock(builder);
-            if(dao.update(stock)) {
+            if (dao.update(stock)) {
                 builder.setStatus(ResponseBuilder.STATUS_OK);
             } else {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
                 builder.setText("Неудалось изменить задание");
             }
+        } catch (InsertException ex) {
+            Manager.setLog(ex);
+            builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
+            builder.setText(ex.getMessage());
         } catch (DBException e) {
             Manager.setLog(e);
             String mes = e.getMessage().toLowerCase();
             if (mes.contains("foreign key")) {
                 throw new PerformException("Поля Заказ, Изображение и Формат должны быть выбраны с поля");
-            } else if (mes.contains("inactive")){
+            } else if (mes.contains("inactive")) {
                 throw new PerformException("Невозможно изменить задание для неактивного заказа");
-            } else{
+            } else {
                 throw new PerformException("Ошибка обработки запроса");
             }
         } catch (ValidationException e) {
@@ -128,7 +134,7 @@ public class StockPerformer extends AbstractPerformer {
     protected void doDelete() throws PerformException, IOException {
         try {
             Stock stock = new Stock(builder);
-            if(dao.delete(stock)) {
+            if (dao.delete(stock)) {
                 builder.setStatus(ResponseBuilder.STATUS_OK);
             } else {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
@@ -137,11 +143,11 @@ public class StockPerformer extends AbstractPerformer {
         } catch (DBException e) {
             Manager.setLog(e);
             String mes = e.getMessage().toLowerCase();
-           if (mes.contains("inactive")){
+            if (mes.contains("inactive")) {
                 throw new PerformException("Невозможно удалить задание для неактивного заказа");
-           } else{
+            } else {
                 throw new PerformException("Ошибка обработки запроса");
-           }
+            }
         } catch (ValidationException e) {
             throw new PerformException("Ошибка формата данных");
         }

@@ -11,9 +11,13 @@ import java.util.List;
 public interface OrderDAO extends GenericDAO<Order> {
 
     List<Order> getByResponsible(int respId) throws SelectException;
+
     List<Order> getByCustomer(int customerId) throws SelectException;
+
     List<Order> getActiveByResponsible(int respId) throws SelectException;
+
     List<Order> getActiveByCustomer(int customerId) throws SelectException;
+
     List<Order> getActiveById(int id) throws SelectException;
 
 }

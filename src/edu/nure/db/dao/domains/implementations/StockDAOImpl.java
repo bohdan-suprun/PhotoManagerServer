@@ -22,12 +22,12 @@ public class StockDAOImpl extends GenericDAOImpl<Stock> implements StockDAO {
     public List<Stock> getStock(int orderId) throws SelectException {
         return getAll(Stock.class,
                 "WHERE `Id_order` = " + orderId
-                );
+        );
     }
 
     @Override
     public Stock select(PrimaryKey key) throws SelectException {
-        Iterator<Stock> it =  getAll(Stock.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator();
+        Iterator<Stock> it = getAll(Stock.class, "WHERE `" + key.getName() + "` = " + key.getValue()).iterator();
         if (it.hasNext()) {
             return it.next();
         } else {

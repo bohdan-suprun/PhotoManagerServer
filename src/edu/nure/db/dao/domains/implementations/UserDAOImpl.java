@@ -1,8 +1,9 @@
 package edu.nure.db.dao.domains.implementations;
 
 import edu.nure.db.RequestPreparing;
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.UserDAO;
+import edu.nure.db.dao.exceptions.DBException;
+import edu.nure.db.dao.exceptions.InsertException;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.User;
 import edu.nure.db.entity.primarykey.PrimaryKey;
@@ -27,8 +28,8 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
 
     @Override
     public User login(String login, String pass) throws SelectException {
-        List<User> li = getAll(User.class, "WHERE `Phone`='"+login+"' and `Password`='"
-                +pass+"' AND `Password` IS NOT NULL");
+        List<User> li = getAll(User.class, "WHERE `Phone`='" + login + "' and `Password`='"
+                + pass + "' AND `Password` IS NOT NULL");
 
         Iterator<User> it = li.iterator();
         if (it.hasNext()) {
@@ -45,7 +46,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
 
     @Override
     public List<User> getByName(String likeName, boolean withHiRights) throws SelectException {
-        if(withHiRights) {
+        if (withHiRights) {
             return getAll(User.class, "WHERE `Name` LIKE '%" + likeName
                             + "%' AND `Right` = 'фотограф' ORDER BY `Name` LIMIT 15"
             );
@@ -67,18 +68,18 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
     public List<User> getByPhone(String likePhone) throws SelectException {
         return getAll(User.class, "Where replace(replace(replace(replace(replace(`Phone`,'+','')"
                 + ",'-',''),'(',''),')',''),' ','') "
-                +"Like '%" + likePhone + "%' ORDER BY Phone LIMIT 15");
+                + "Like '%" + likePhone + "%' ORDER BY Phone LIMIT 15");
     }
 
     @Override
     public boolean setPassword(int id, String pass) throws DBException {
-        try (Connection c = connection; Statement s = c.createStatement()){
+        try (Connection c = connection; Statement s = c.createStatement()) {
             String sql = RequestPreparing.update("USER", new String[]{"Password"}, new Object[]{pass},
-                    "`Id`="+id+" AND `Password` is NULL"
+                    "`Id`=" + id + " AND `Password` is NULL"
             );
             int n = s.executeUpdate(sql);
             return n == 1;
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex);
         }
     }
@@ -86,7 +87,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
     @Override
     public User authenticate(String code) throws DBException {
 
-        try (Connection c = connection; Statement s = c.createStatement()){
+        try (Connection c = connection; Statement s = c.createStatement()) {
             String sql = "Select * FROM `AUT` INNER JOIN `USER` USING(Id) WHERE `Code` = '" + code
                     + "' AND `Password` is null";
 
@@ -109,7 +110,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
 
     @Override
     public User select(PrimaryKey key) throws SelectException {
-        Iterator<User> it =  getAll(User.class, "WHERE `"+key.getName()+"` = "+key.getValue()).iterator();
+        Iterator<User> it = getAll(User.class, "WHERE `" + key.getName() + "` = " + key.getValue()).iterator();
         if (it.hasNext()) {
             return it.next();
         } else {
@@ -117,30 +118,52 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
         }
     }
 
-    @Override
-    public String insertCode(User user) throws DBException {
-
-        try (Connection c = connection; Statement s = c.createStatement()){
-            String autCode = null;
-            if (user != null) {
-                autCode = getCode(user);
-                String sql = RequestPreparing.insert("aut", new String[]{"Id", "Code"},
-                        new Object[]{user.getId(), autCode});
-                s.executeUpdate(sql);
+    private User newUser(User ent, Statement s) throws DBException {
+        try {
+            String sql = RequestPreparing.insert(ent.entityName(), ent.getFields(), ent.getValues());
+            int n = s.executeUpdate(sql);
+            if (n != 1) {
+                throw new InsertException("Произошла ошибка во время добавления нового пользователя");
             }
-            return autCode;
-        } catch (SQLException ex){
+            return getLastInserted(ent, s);
+        } catch (SQLException ex) {
             throw new DBException(ex);
         }
     }
 
-    private String getCode(User user){
+    @Override
+    public String insertCode(User user) throws DBException {
+        try (Statement s = connection.createStatement()) {
+            connection.setAutoCommit(false);
+            user.setId(newUser(user, s).getId());
+            String autCode = getCode(user);
+            String sql = RequestPreparing.insert("aut", new String[]{"Id", "Code"},
+                    new Object[]{user.getId(), autCode});
+            int n = s.executeUpdate(sql);
+            if (n != 1) {
+                throw new InsertException("Ошибка во время добавления кода авторизации для пользователя");
+            }
+            connection.commit();
+            return autCode;
+        } catch (SQLException ex) {
+            throw new DBException(ex);
+        } finally {
+            try {
+                connection.setAutoCommit(false);
+                connection.close();
+            } catch (SQLException ex) {
+                throw new DBException(ex);
+            }
+        }
+    }
+
+    private String getCode(User user) {
         try {
-            return new BigInteger(MessageDigest.getInstance("MD5").digest((user.getName()+new Date().getTime()
-                    + user.getId() + user.getPhone() + (1000000+new Random()
-                            .nextLong())).getBytes())).toString(16);
+            return new BigInteger(MessageDigest.getInstance("MD5").digest((user.getName() + new Date().getTime()
+                    + user.getId() + user.getPhone() + (1000000 + new Random()
+                    .nextLong())).getBytes())).toString(16);
         } catch (NoSuchAlgorithmException e) {
-            return new BigInteger(user.getName() + new Date().getTime()+user.getPhone()+user.getId()+(1000000+
+            return new BigInteger(user.getName() + new Date().getTime() + user.getPhone() + user.getId() + (1000000 +
                     new Random().nextLong())).toString(16);
         }
     }

@@ -1,7 +1,7 @@
 package edu.nure.db.dao.domains.implementations;
 
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.ImageDAO;
+import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.Image;
 import edu.nure.db.entity.primarykey.PrimaryKey;
@@ -14,9 +14,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by bod on 11.11.15.
- */
 public class ImageDAOImpl extends GenericDAOImpl<Image> implements ImageDAO {
 
     public ImageDAOImpl(Connection connection) {
@@ -24,7 +21,7 @@ public class ImageDAOImpl extends GenericDAOImpl<Image> implements ImageDAO {
     }
 
     @Override
-    public List<Image> getLike(String hash, int limit) throws SelectException{
+    public List<Image> getLike(String hash, int limit) throws SelectException {
         return getAll(Image.class,
                 "Where BIT_COUNT(CONV(`Hash`, 16, 10) ^ CONV('" + hash + "', 16, 10)) <=" + limit +
                         " ORDER BY " + "BIT_COUNT(CONV(`Hash`, 16, 10) ^ CONV('" + hash + "', 16, 10))"
@@ -32,7 +29,7 @@ public class ImageDAOImpl extends GenericDAOImpl<Image> implements ImageDAO {
     }
 
     @Override
-    public Image select(PrimaryKey key) throws SelectException{
+    public Image select(PrimaryKey key) throws SelectException {
         Iterator<Image> it = getAll(Image.class, "Where `" + key.getName() + "`=" + key.getValue()).iterator();
         if (it.hasNext()) {
             return it.next();
@@ -49,11 +46,11 @@ public class ImageDAOImpl extends GenericDAOImpl<Image> implements ImageDAO {
 
     @Override
     public Image insert(Image ent) throws DBException {
-        final String sql =  "INSERT INTO `IMAGE` " +
+        final String sql = "INSERT INTO `IMAGE` " +
                 "(`Hash`, `Album`,`CreatedIn`,`Image`)" +
                 "VALUES(?, ?, ?, ?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)){
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, ent.getHash());
             ps.setInt(2, ent.getAlbum());
@@ -61,19 +58,19 @@ public class ImageDAOImpl extends GenericDAOImpl<Image> implements ImageDAO {
             ps.setBytes(4, ent.getImage());
             connection.setAutoCommit(false);
             int n = ps.executeUpdate();
-            if (n != 1){
+            if (n != 1) {
                 throw new DBException("Ошибка при добавлении нового элемента: ничего не добавлено");
             }
             Image lastIm = getLastInserted(ent, ps);
             connection.commit();
             return lastIm;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new DBException(ex);
         } finally {
-            try{
+            try {
                 connection.setAutoCommit(true);
                 connection.close();
-            } catch (SQLException ex){
+            } catch (SQLException ex) {
                 throw new DBException(ex);
             }
         }

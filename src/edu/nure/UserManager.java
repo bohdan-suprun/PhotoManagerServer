@@ -13,38 +13,36 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
-/**
- * Created by bod on 26.09.15.
- */
 public class UserManager extends HttpServlet {
     public static String hostName = "127.0.0.1";
-    public static final String ACCESS_DENIED_HTML="<html><head><title>Access Denied</title></head><body>" +
+    public static final String ACCESS_DENIED_HTML = "<html><head><title>Access Denied</title></head><body>" +
             "<h1><b>505 Access denied</b></h1></body></html>";
-    public static final String INNER_ERROR_HTML="<html><head><title>Inner error</title></head><body>" +
+    public static final String INNER_ERROR_HTML = "<html><head><title>Inner error</title></head><body>" +
             "<h1><b>500 Inner server error</b></h1></body></html>";
-    public static final String FILE_NOT_FOUND_HTML="<html><head><title>File not found</title></head><body>" +
+    public static final String FILE_NOT_FOUND_HTML = "<html><head><title>File not found</title></head><body>" +
             "<h1><b>404<br/> Requested file not found</b></h1></body></html>";
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ResponseBuilder builder = new ResponseBuilder(req, -1);
         hostName = req.getServerName();
-        AbstractPerformer p = null;
+        AbstractPerformer p;
         try {
             builder.setContentType(req.getContentType());
             p = new CustomerPerformer(builder, resp);
             p.perform();
-        }catch (PerformException ex){
-            if(ex.getMessage()!= null && ex.getMessage().contains("File not")){
+        } catch (PerformException ex) {
+            if (ex.getMessage() != null && ex.getMessage().contains("File not")) {
                 resp.setStatus(404);
                 builder.add(INNER_ERROR_HTML);
-            }else {
+            } else {
                 resp.setStatus(500);
                 builder.add(INNER_ERROR_HTML);
             }
         } catch (AccessDeniedException ex) {
             resp.setStatus(505);
             builder.add(ACCESS_DENIED_HTML);
-        } catch (DBException ex){
+        } catch (DBException ex) {
             resp.setStatus(500);
             builder.add(INNER_ERROR_HTML);
 
@@ -56,7 +54,7 @@ public class UserManager extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-       doGet(req, resp);
+        doGet(req, resp);
 
     }
 

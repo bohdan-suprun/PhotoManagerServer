@@ -1,7 +1,6 @@
 package edu.nure.db.dao.domains.implementations;
 
 import edu.nure.db.dao.domains.interfaces.FormatDAO;
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.Format;
 import edu.nure.db.entity.primarykey.PrimaryKey;
@@ -27,8 +26,8 @@ public class FormatDAOImpl extends GenericDAOImpl<Format> implements FormatDAO {
 
     @Override
     public Format select(PrimaryKey key) throws SelectException {
-        Iterator<Format> it =  getAll(Format.class,
-                "WHERE `"+key.getName()+"`=\'" + key.getValue()+ "\'").iterator();
+        Iterator<Format> it = getAll(Format.class,
+                "WHERE `" + key.getName() + "`=\'" + key.getValue() + "\'").iterator();
         if (it.hasNext()) {
             return it.next();
         } else {
@@ -37,12 +36,12 @@ public class FormatDAOImpl extends GenericDAOImpl<Format> implements FormatDAO {
     }
 
     @Override
-    public List<Format> selectAll() throws SelectException{
+    public List<Format> selectAll() throws SelectException {
         return getAll(Format.class, null);
     }
 
     @Override
-    protected Format getLastInserted(Format tClass, Statement s) throws SelectException{
+    protected Format getLastInserted(Format tClass, Statement s) throws SelectException {
         return tClass;
     }
 }

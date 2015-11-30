@@ -4,11 +4,11 @@ package edu.nure.db.entity.constraints;
  * Created by bod on 17.09.15.
  */
 public class ValidationException extends Exception {
-    public ValidationException(){
+    public ValidationException() {
         super();
     }
 
-    public ValidationException(String msg){
+    public ValidationException(String msg) {
         super(msg);
     }
 }

@@ -19,7 +19,7 @@ public class Format implements Transmittable {
     private int width, height;
     private double price;
 
-    public Format(){
+    public Format() {
 
     }
 
@@ -37,7 +37,7 @@ public class Format implements Transmittable {
             setWidth(rs.getInt("Width"));
             setPrice(rs.getDouble("Price"));
 
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
 
@@ -49,7 +49,7 @@ public class Format implements Transmittable {
             setHeight(req.getIntParameter("height"));
             setWidth(req.getIntParameter("width"));
             setPrice(req.getDoubleParameter("price"));
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex) {
             throw new ValidationException();
         }
     }
@@ -59,7 +59,7 @@ public class Format implements Transmittable {
     }
 
     public void setName(String name) {
-        this.name = name.replace('\'','"');
+        this.name = name.replace('\'', '"');
     }
 
     public int getWidth() {
@@ -67,7 +67,7 @@ public class Format implements Transmittable {
     }
 
     public void setWidth(int width) throws ValidationException {
-        this.width = (Integer)Validator.validate(width, new MoreOrEq<Integer>(1));
+        this.width = (Integer) Validator.validate(width, new MoreOrEq<Integer>(1));
     }
 
     public int getHeight() {
@@ -75,7 +75,7 @@ public class Format implements Transmittable {
     }
 
     public void setHeight(int height) throws ValidationException {
-        this.height = this.width = (Integer)Validator.validate(height, new MoreOrEq<Integer>(1));
+        this.height = this.width = (Integer) Validator.validate(height, new MoreOrEq<Integer>(1));
     }
 
     public double getPrice() {
@@ -83,32 +83,33 @@ public class Format implements Transmittable {
     }
 
     public void setPrice(double price) throws ValidationException {
-        this.price = (Double)Validator.validate(price, new MoreOrEq<Double>(0.0));
+        this.price = (Double) Validator.validate(price, new MoreOrEq<Double>(0.0));
     }
 
 
     @Override
     public String toXML() {
-        return "<format name=\""+name.replace('"','\'')+"\" "+
-                "width=\""+width+"\" "+
-                "height=\""+height+"\" "+
-                "price=\""+price+"\"/>";
+        return "<format name=\"" + name.replace('"', '\'') + "\" " +
+                "width=\"" + width + "\" " +
+                "height=\"" + height + "\" " +
+                "price=\"" + price + "\"/>";
     }
 
     @Override
     public String toQuery() {
-        return "name=" + name.replace('"','\'') +
+        return "name=" + name.replace('"', '\'') +
                 "&width=" + width +
                 "&height=" + height +
                 "&price=" + price;
     }
-/*
-    public static Format getFormatByName(String name)throws ConnectException, SQLException, ValidationException{
-        ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                executeQuery(RequestPreparing.select("format", new String[]{"*"}, "WHERE Name = '" + name+"'"));
-        return new Format(rs);
-    }
-    */
+
+    /*
+        public static Format getFormatByName(String name)throws ConnectException, SQLException, ValidationException{
+            ResultSet rs = Connector.getConnector().getConnection().createStatement().
+                    executeQuery(RequestPreparing.select("format", new String[]{"*"}, "WHERE Name = '" + name+"'"));
+            return new Format(rs);
+        }
+        */
     public String[] getFields() {
         return new String[]{"Name", "Width", "Height", "Price"};
     }

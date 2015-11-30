@@ -9,9 +9,11 @@ abstract public class AbstractDAOFactory {
     public static final int MYSQL = 1;
 
     public static DAOFactory getDAO(int type) throws DBException {
-        switch (type){
-            case MYSQL: return new MySQLDAOFactory();
-            default: return null;
+        switch (type) {
+            case MYSQL:
+                return new MySQLDAOFactory();
+            default:
+                return null;
         }
     }
 }

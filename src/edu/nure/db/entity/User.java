@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * Created by bod on 17.09.15.
  */
-public class User implements Transmittable{
+public class User implements Transmittable {
     public static final int ID_NOT_SET = -1;
     private int id = ID_NOT_SET;
     private String phone;
@@ -29,31 +29,31 @@ public class User implements Transmittable{
 
     public void setEmail(String email) throws ValidationException {
         try {
-            if(email != null) {
+            if (email != null) {
                 this.email = Validator.validate(email, Validator.EMAIL_VALIDATOR);
             }
-        } catch (ValidationException ex){
+        } catch (ValidationException ex) {
             throw new ValidationException("Адресс электронной почты указан неверно");
         }
 
     }
 
-    public User(){
+    public User() {
 
     }
 
-    public User(int id, String name, String phone, String email, String password, Right right) throws ValidationException{
-            this.id = id;
-            setPhone(phone);
-            setName(name);
-            setEmail(email);
-            this.password = password;
-            this.right = right;
+    public User(int id, String name, String phone, String email, String password, Right right) throws ValidationException {
+        this.id = id;
+        setPhone(phone);
+        setName(name);
+        setEmail(email);
+        this.password = password;
+        this.right = right;
 
     }
 
     @Override
-    public void parseResultSet(ResultSet result) throws DBException, ValidationException{
+    public void parseResultSet(ResultSet result) throws DBException, ValidationException {
         try {
             setId(result.getInt("Id"));
             setName(result.getString("Name"));
@@ -61,14 +61,14 @@ public class User implements Transmittable{
             setEmail(result.getString("Email"));
             setPassword(result.getString("Password"));
             setRight(new Right(result.getString("Right"), null));
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             throw new DBException(ex.getMessage());
         }
     }
 
-    public User(ResponseBuilder req) throws ValidationException{
+    public User(ResponseBuilder req) throws ValidationException {
         String id = req.getParameter("id");
-        if(id != null)
+        if (id != null)
             setId(Integer.valueOf(id));
         else setId(ID_NOT_SET);
         setName(req.getParameter("name"));
@@ -93,9 +93,9 @@ public class User implements Transmittable{
     public void setPhone(String phone) throws ValidationException {
         try {
             this.phone = Objects.requireNonNull(Validator.validate(phone, Validator.PHONE_VALIDATOR));
-        }catch (NullPointerException ex){
-                throw new ValidationException("Вы не казали номер телефона");
-        }catch (ValidationException ex){
+        } catch (NullPointerException ex) {
+            throw new ValidationException("Вы не казали номер телефона");
+        } catch (ValidationException ex) {
             throw new ValidationException("Номер телефона в неверном формате. Пример: +38(xxx) yyy-yy-yy");
         }
     }
@@ -108,9 +108,9 @@ public class User implements Transmittable{
         try {
             this.name = Objects.requireNonNull(Validator.validate(name.replace('"', '\''), Validator.NAME_VALIDATOR))
                     .replace("\'", "\"");
-        } catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             throw new ValidationException("Вы забыли указать имя");
-        } catch (ValidationException ex){
+        } catch (ValidationException ex) {
             throw new ValidationException("Имя должно состоять только из букв, может содержать символ '");
         }
     }
@@ -143,17 +143,17 @@ public class User implements Transmittable{
 
     @Override
     public String toXML() {
-        return "<user "+"id=\""+id+"\" name=\""+name.replace('"','\'')+"\""
-                +" phone=\""+phone+"\""
-                + ((email == null)?"":" email=\""+email.replace('"','\'')+"\"")
-                +" right=\""+right.getType()+"\"/>";
+        return "<user " + "id=\"" + id + "\" name=\"" + name.replace('"', '\'') + "\""
+                + " phone=\"" + phone + "\""
+                + ((email == null) ? "" : " email=\"" + email.replace('"', '\'') + "\"")
+                + " right=\"" + right.getType() + "\"/>";
     }
 
     @Override
     public String toQuery() {
         return "id=" + id +
                 "&phone=" + phone +
-                "&name=" + name  +
+                "&name=" + name +
                 "&email=" + email +
                 "&right=" + right.getType();
     }

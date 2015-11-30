@@ -6,8 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Created by bod on 06.10.15.
@@ -27,7 +25,7 @@ public class ResponseBuilder {
     private String text;
     private int status = STATUS_OK;
 
-    public ResponseBuilder(HttpServletRequest request, int action){
+    public ResponseBuilder(HttpServletRequest request, int action) {
         this.request = request;
         body = new ByteArrayOutputStream();
         this.action = action;
@@ -37,76 +35,76 @@ public class ResponseBuilder {
         return contentType;
     }
 
-    public String getParameter(String name){
+    public String getParameter(String name) {
         String value = request.getParameter(name);
         if (value != null) value = value.replace("'", "\"");
 
         return value;
     }
 
-    public int getIntParameter(String name){
+    public int getIntParameter(String name) {
         return Integer.valueOf(getParameter(name));
     }
 
-    public double getDoubleParameter(String name){
+    public double getDoubleParameter(String name) {
         return Double.valueOf(getParameter(name));
     }
 
-    public void setContentType(String contentType){
+    public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
-    public void add(Transmittable ent){
+    public void add(Transmittable ent) {
         add(ent.toXML());
     }
 
-    public void add(String xml){
+    public void add(String xml) {
         add(xml.getBytes());
     }
 
-    public void add(byte[] date){
+    public void add(byte[] date) {
         try {
             body.write(date);
-        } catch (IOException ex){
+        } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
     }
 
-    public void setStatus(int status){
+    public void setStatus(int status) {
         this.status = status;
     }
 
-    public void setText(String text){
+    public void setText(String text) {
         this.text = text;
     }
 
-    public void setAction(int action){
+    public void setAction(int action) {
         this.action = action;
     }
 
-    public void writeTo(OutputStream out) throws IOException{
-        if(XML_TYPE.equals(contentType)) {
+    public void writeTo(OutputStream out) throws IOException {
+        if (XML_TYPE.equals(contentType)) {
             out.write("<result>".getBytes());
-            out.write(("<action id=\""+action+"\" status=\""+status+"\" ").getBytes());
-            if(status == STATUS_PARAM_ERROR)
+            out.write(("<action id=\"" + action + "\" status=\"" + status + "\" ").getBytes());
+            if (status == STATUS_PARAM_ERROR)
                 setText("Переданы ошибочные параметры");
 
-            if(text != null)
+            if (text != null)
                 out.write(("text=\"" + text + "\"").getBytes());
             out.write("/>".getBytes());
             out.write(body.toByteArray());
             out.write("</result>".getBytes());
 
         } else {
-           out.write(body.toByteArray());
+            out.write(body.toByteArray());
         }
     }
 
-    public int getAction(){
+    public int getAction() {
         return action;
     }
 
-    public HttpServletRequest getRequest(){
+    public HttpServletRequest getRequest() {
         return request;
     }
 

@@ -11,7 +11,7 @@ public class MoreOrEq<T extends Comparable> extends MoreThan<T> {
 
     @Override
     public int compareTo(T t) {
-        if(t.compareTo(constraints) >= 0)
+        if (t.compareTo(constraints) >= 0)
             return 0;
         return -1;
     }

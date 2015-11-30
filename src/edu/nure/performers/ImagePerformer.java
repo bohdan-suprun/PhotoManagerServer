@@ -2,8 +2,9 @@ package edu.nure.performers;
 
 import edu.nure.Manager;
 import edu.nure.db.dao.AbstractDAOFactory;
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.ImageDAO;
+import edu.nure.db.dao.exceptions.DBException;
+import edu.nure.db.dao.exceptions.InsertException;
 import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
@@ -15,19 +16,17 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by bod on 21.09.15.
- */
-public class ImagePerformer extends AbstractPerformer{
+public class ImagePerformer extends AbstractPerformer {
     private DiskFileItemFactory factory;
     private ImageDAO dao;
 
@@ -38,22 +37,22 @@ public class ImagePerformer extends AbstractPerformer{
     }
 
     public void perform() throws PerformException, IOException, DBException {
-            int action = builder.getAction();
+        int action = builder.getAction();
 
-            switch (action) {
-                case Action.GET_IMAGE:
-                    doGet();
-                    break;
-                case Action.DELETE_IMAGE:
-                    doDelete();
-                    break;
-                case Action.INSERT_IMAGE:
-                    doInsert();
-                    break;
-                default:
-                    builder.setStatus(ResponseBuilder.STATUS_PARAM_ERROR);
+        switch (action) {
+            case Action.GET_IMAGE:
+                doGet();
+                break;
+            case Action.DELETE_IMAGE:
+                doDelete();
+                break;
+            case Action.INSERT_IMAGE:
+                doInsert();
+                break;
+            default:
+                builder.setStatus(ResponseBuilder.STATUS_PARAM_ERROR);
 
-            }
+        }
     }
 
     @Override
@@ -61,7 +60,7 @@ public class ImagePerformer extends AbstractPerformer{
         try {
             if (builder.getParameter("hash") != null) {
                 String hash = builder.getParameter("hash");
-                if(hash.matches("[0-9A-Fa-f]+")) {
+                if (hash.matches("[0-9A-Fa-f]+")) {
                     getLookLikes(hash);
                 }
                 builder.setContentType(ResponseBuilder.XML_TYPE);
@@ -71,7 +70,7 @@ public class ImagePerformer extends AbstractPerformer{
                 try {
                     int id = builder.getIntParameter("id");
                     builder.add(dao.select(new IntegerPrimaryKey(id)));
-                } catch (NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     throw new PerformException("Невозможно преобразовать id в число");
                 }
                 builder.setContentType(ResponseBuilder.XML_TYPE);
@@ -92,70 +91,74 @@ public class ImagePerformer extends AbstractPerformer{
                 int albumId = builder.getIntParameter("albumId");
                 getAllImages(albumId);
                 builder.setContentType(ResponseBuilder.XML_TYPE);
-            }catch (NumberFormatException ex){
+            } catch (NumberFormatException ex) {
                 throw new ValidationException();
             }
 
 
         } catch (ValidationException e) {
             throw new PerformException("Неверный фомат данных");
-        } catch (SelectException ex){
+        } catch (SelectException ex) {
             Manager.setLog(ex);
             throw new PerformException("Ошибка во время работы с базой данных");
         }
     }
 
-    private void getLookLikes(String pHash) throws SelectException{
+    private void getLookLikes(String pHash) throws SelectException {
         int li = builder.getIntParameter("limit");
 
-        for (edu.nure.db.entity.Image im: dao.getLike(pHash, li)) {
+        for (edu.nure.db.entity.Image im : dao.getLike(pHash, li)) {
             builder.add(im);
         }
     }
 
-    private void getAllImages(int albumId) throws SelectException{
-        for (edu.nure.db.entity.Image image:  dao.getInAlbum(albumId)) {
+    private void getAllImages(int albumId) throws SelectException {
+        for (edu.nure.db.entity.Image image : dao.getInAlbum(albumId)) {
             builder.add(image);
         }
     }
 
-    private byte[] getFull(int id) throws SelectException{
+    private byte[] getFull(int id) throws SelectException {
         return dao.select(new IntegerPrimaryKey(id)).getImage();
     }
 
     @Override
-    public void doInsert() throws PerformException, IOException{
+    public void doInsert() throws PerformException, IOException {
         try {
             if (ServletFileUpload.isMultipartContent(builder.getRequest())) {
                 edu.nure.db.entity.Image image = parseRequest(new ServletFileUpload(factory));
                 image = dao.insert(image);
 
-                if(image != null) {
+                if (image != null) {
                     builder.add(image);
                     builder.setStatus(ResponseBuilder.STATUS_OK);
                 } else {
                     builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
                     builder.setText("Неудалось добавить изображение");
                 }
-            } else{
+            } else {
                 throw new PerformException("Неверный формат входного пакета");
             }
         } catch (FileUploadException ex) {
             Manager.setLog(ex);
             throw new PerformException("Ошибка загрузки файла");
-        } catch (DBException ex){
+        } catch (InsertException ex) {
+            Manager.setLog(ex);
+            builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
+            builder.setText(ex.getMessage());
+        } catch (DBException ex) {
             Manager.setLog(ex);
             throw new PerformException("Ошибка обработки запроса");
         }
 
     }
 
-    private edu.nure.db.entity.Image parseRequest(ServletFileUpload upload) throws FileUploadException, IOException{
+    private edu.nure.db.entity.Image parseRequest(ServletFileUpload upload) throws FileUploadException, IOException {
         List items = upload.parseRequest(builder.getRequest());
-        HashMap<String, String> parameters = new HashMap<String, String>();
+        HashMap<String, String> parameters = new HashMap<>();
         byte[] buffer = null;
         for (Object it : items) {
-            FileItem item = (FileItem)it;
+            FileItem item = (FileItem) it;
             if (item.isFormField())
                 parameters.put(item.getFieldName(), item.getString("utf-8"));
             else buffer = item.get();
@@ -173,7 +176,7 @@ public class ImagePerformer extends AbstractPerformer{
     protected void doDelete() throws PerformException, IOException {
         try {
             int id = builder.getIntParameter("id");
-            if(dao.delete("IMAGE", new IntegerPrimaryKey(id))){
+            if (dao.delete("IMAGE", new IntegerPrimaryKey(id))) {
                 builder.setStatus(ResponseBuilder.STATUS_OK);
             } else {
                 builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
@@ -190,9 +193,9 @@ public class ImagePerformer extends AbstractPerformer{
         Image img = ImageIO.read(new ByteArrayInputStream(imgBytes));
         int width = img.getWidth(null);
         int height = img.getHeight(null);
-        double scale = 75.0/(double)Math.min(width, height);
-        int miniWidth = (int)(scale * (double)width);
-        int miniHeight = (int)(scale * (double)height);
+        double scale = 75.0 / (double) Math.min(width, height);
+        int miniWidth = (int) (scale * (double) width);
+        int miniHeight = (int) (scale * (double) height);
 
         AffineTransform transform = new AffineTransform(
                 ((double) miniWidth) / width, 0, 0,
@@ -204,11 +207,10 @@ public class ImagePerformer extends AbstractPerformer{
         BufferedImage miniImage = new BufferedImage(miniWidth, miniHeight, BufferedImage.TYPE_3BYTE_BGR);
         transformer.filter(fullImage, miniImage);
 
-        if(miniHeight > miniWidth) {
-            miniImage = miniImage.getSubimage(0, (miniHeight - 75) / 2, 75, 75 + (miniHeight-75)/2);
-        }
-        else if(miniHeight < miniWidth) {
-            miniImage = miniImage.getSubimage((miniWidth - 75) / 2, 0, 75 + (miniHeight-75)/2, 75);
+        if (miniHeight > miniWidth) {
+            miniImage = miniImage.getSubimage(0, (miniHeight - 75) / 2, 75, 75 + (miniHeight - 75) / 2);
+        } else if (miniHeight < miniWidth) {
+            miniImage = miniImage.getSubimage((miniWidth - 75) / 2, 0, 75 + (miniHeight - 75) / 2, 75);
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(miniImage, "jpg", out);

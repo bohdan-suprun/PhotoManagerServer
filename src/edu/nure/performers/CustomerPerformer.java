@@ -4,8 +4,8 @@ import edu.nure.Manager;
 import edu.nure.UserManager;
 import edu.nure.db.dao.AbstractDAOFactory;
 import edu.nure.db.dao.DAOFactory;
-import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.domains.interfaces.AlbumDAO;
+import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.entity.Album;
 import edu.nure.db.entity.Image;
 import edu.nure.db.entity.User;
@@ -22,11 +22,9 @@ import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
-/**
- * Created by bod on 26.09.15.
- */
-public class CustomerPerformer extends AbstractPerformer{
-    private final HashMap<String, String> ACCESS = new HashMap<String, String>();
+public class CustomerPerformer extends AbstractPerformer {
+    private final HashMap<String, String> ACCESS = new HashMap<>();
+
     {
         // requested page and required parameter in url
         // used for input user name, phone, etc.
@@ -34,6 +32,7 @@ public class CustomerPerformer extends AbstractPerformer{
         ACCESS.put("registry.html", "aut");
         ACCESS.put("gallery.html", "id");
     }
+
     private HttpServletResponse response;
     private DAOFactory dao;
 
@@ -103,7 +102,7 @@ public class CustomerPerformer extends AbstractPerformer{
                 }
             } catch (NullPointerException e) {
                 throw new PerformException("Такого пользователя не существут");
-            } catch (DBException ex){
+            } catch (DBException ex) {
                 Manager.setLog(ex);
                 throw new PerformException("Ошибка при обработке запроса");
             }
@@ -120,7 +119,7 @@ public class CustomerPerformer extends AbstractPerformer{
                 buf = new String(buf).replace("{hostname}", UserManager.hostName).getBytes();
             }
             return buf;
-        }catch (IOException ex){
+        } catch (IOException ex) {
             Manager.setLog(ex);
             throw new PerformException("File not found");
         }
@@ -129,11 +128,11 @@ public class CustomerPerformer extends AbstractPerformer{
     private byte[] getFile(String filename, User user) throws PerformException {
         // load file and insert actual user info
         try {
-            FileInputStream in =  new FileInputStream(new File(filename));
+            FileInputStream in = new FileInputStream(new File(filename));
             byte[] buf = new byte[in.available()];
             in.read(buf);
             String s = new String(buf);
-            if(filename.contains(".html") || filename.contains(".js")) {
+            if (filename.contains(".html") || filename.contains(".js")) {
                 String replace[] = {"{phone}", "{hostname}", "{username}"};
                 String to[] = {user.getPhone(), UserManager.hostName, user.getName()};
                 for (int i = 0; i < replace.length; i++) {
@@ -154,9 +153,9 @@ public class CustomerPerformer extends AbstractPerformer{
             String regCode = Objects.requireNonNull(builder.getParameter("aut"));
             User user = dao.getUserDAO().authenticate(regCode);
             builder.getRequest().getSession().setAttribute("aut", String.valueOf(user.getId()));
-            response.sendRedirect("https://"+UserManager.hostName+"/user/registry.html");
+            response.sendRedirect("https://" + UserManager.hostName + "/user/registry.html");
 
-        } catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             response.setStatus(505);
             response.getWriter().print(UserManager.ACCESS_DENIED_HTML);
         } catch (DBException e) {
@@ -181,7 +180,7 @@ public class CustomerPerformer extends AbstractPerformer{
 
     }
 
-    private boolean login(){
+    private boolean login() {
         try {
             String password = builder.getParameter("password");
             String phone = builder.getParameter("phone");
@@ -198,7 +197,7 @@ public class CustomerPerformer extends AbstractPerformer{
             }
         } catch (ValidationException e) {
             return false;
-        } catch (DBException ex){
+        } catch (DBException ex) {
             Manager.setLog(ex);
             return false;
         }
@@ -208,17 +207,17 @@ public class CustomerPerformer extends AbstractPerformer{
     private void ajax() throws PerformException {
         // entries templates
         final String TEMPLATE_IMG = "{\"alt\":\"/a/\", \"src\":\"/s/\"}";
-        final String TEMPLATE_SRC = "https://"+UserManager.hostName+"/image/?action=201&albumId=/album/"+
+        final String TEMPLATE_SRC = "https://" + UserManager.hostName + "/image/?action=201&albumId=/album/" +
                 "&id=/id/&preview";
         try {
             AlbumDAO albumDAO = dao.getAlbumDAO();
             int userId = Integer.valueOf(builder.getRequest().getSession().getAttribute("id").toString());
             Map<Album, List<Image>> albums = albumDAO.getUserAlbums(userId);
-            HashMap<String, List<String>> json = new HashMap<String, List<String>>();
-            for(Album album: albums.keySet()){
+            HashMap<String, List<String>> json = new HashMap<>();
+            for (Album album : albums.keySet()) {
                 json.put(album.getName(), new ArrayList<String>());
                 String albumId = String.valueOf(album.getId());
-                for (Image im: albums.get(album)) {
+                for (Image im : albums.get(album)) {
                     String imageId = String.valueOf(im.getId());
                     List<String> container = json.get(album.getName());
                     container.add(
@@ -226,7 +225,8 @@ public class CustomerPerformer extends AbstractPerformer{
                                     "/s/", TEMPLATE_SRC.replace("/album/", albumId).replace("/id/", imageId)
                             )
                     );
-                }            }
+                }
+            }
             builder.add(prepareJson(json));
         } catch (DBException e) {
             Manager.setLog(e);
@@ -234,23 +234,23 @@ public class CustomerPerformer extends AbstractPerformer{
         }
     }
 
-    private byte[] prepareJson(HashMap<String, List<String>> pJson){
+    private byte[] prepareJson(HashMap<String, List<String>> pJson) {
         // create JSON file using hash map
         StringBuilder result = new StringBuilder("{\n");
-        for(String k: pJson.keySet()){
-            result.append("\"" + k + "\":[");
-            for(String item: pJson.get(k)){
-                result.append(item+ ", ");
+        for (String k : pJson.keySet()) {
+            result.append("\"").append(k).append("\":[");
+            for (String item : pJson.get(k)) {
+                result.append(item).append(", ");
             }
             result.append("],");
             result = new StringBuilder(result.toString().replace("}, ]", "}]"));
         }
-        return result.append("}").toString().replace("],}","]}").getBytes();
+        return result.append("}").toString().replace("],}", "]}").getBytes();
     }
 
     private boolean checkForFileAccess(HttpSession session, String fileName) {
-        for(String k: ACCESS.keySet()){
-            if(fileName.contains(k)){
+        for (String k : ACCESS.keySet()) {
+            if (fileName.contains(k)) {
                 return session.getAttribute(ACCESS.get(k)) != null;
             }
         }

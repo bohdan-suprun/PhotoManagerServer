@@ -17,11 +17,11 @@ abstract public class AbstractPerformer {
 
     }
 
-    protected ResponseBuilder getBuilder(){
+    protected ResponseBuilder getBuilder() {
         return builder;
     }
 
-    protected void setBuilder(ResponseBuilder builder){
+    protected void setBuilder(ResponseBuilder builder) {
         this.builder = builder;
     }
 
@@ -31,14 +31,17 @@ abstract public class AbstractPerformer {
         // returns requested values
         //TODO
     }
-    protected void doInsert() throws PerformException, IOException{
+
+    protected void doInsert() throws PerformException, IOException {
         // inserts and returns value of last inserted item
         //TODO
     }
-    protected void doUpdate() throws PerformException, IOException{
+
+    protected void doUpdate() throws PerformException, IOException {
         // updates value
         //TODO
     }
+
     protected void doDelete() throws PerformException, IOException {
         // just deletes value if it is not restricted
         //TODO

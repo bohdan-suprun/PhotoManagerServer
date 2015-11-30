@@ -11,6 +11,7 @@ import java.util.List;
 public interface ImageDAO extends GenericDAO<Image> {
 
     List<Image> getLike(String hash, int limit) throws SelectException;
+
     List<Image> getInAlbum(int albumId) throws SelectException;
 
 }

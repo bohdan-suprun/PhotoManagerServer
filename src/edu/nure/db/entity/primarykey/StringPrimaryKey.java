@@ -6,6 +6,6 @@ package edu.nure.db.entity.primarykey;
 public class StringPrimaryKey extends PrimaryKey<String> {
 
     public StringPrimaryKey(String name, String value) {
-        super(name, "'"+value+"'");
+        super(name, "'" + value + "'");
     }
 }

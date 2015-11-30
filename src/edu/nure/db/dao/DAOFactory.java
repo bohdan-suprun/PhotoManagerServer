@@ -13,13 +13,21 @@ import java.sql.Connection;
 public interface DAOFactory {
 
     Connection getConnection() throws DBException;
+
     AlbumDAO getAlbumDAO() throws DBException;
+
     FormatDAO getFormatDAO() throws DBException;
+
     ImageDAO getImageDAO() throws DBException;
+
     OrderDAO getOrderDAO() throws DBException;
+
     GenericDAO<Right> getRightDAO() throws DBException;
+
     StockDAO getStockDAO() throws DBException;
+
     GenericDAO<Urgency> getUrgencyDAO() throws DBException;
+
     UserDAO getUserDAO() throws DBException;
 
 }
