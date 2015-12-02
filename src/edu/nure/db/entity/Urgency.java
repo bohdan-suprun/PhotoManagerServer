@@ -15,7 +15,9 @@ import java.util.Date;
 /**
  * Created by bod on 17.09.15.
  */
-public class Urgency implements Transmittable {
+public class Urgency extends AbstractEntity {
+
+    private static final long serialVersionUID = 6047052170553696156L;
     private int term;
     private double factor;
     private static final int TO_MS = 60000;
@@ -24,7 +26,7 @@ public class Urgency implements Transmittable {
         return term;
     }
 
-    public void setTerm(int term) throws ValidationException {
+    private void setTerm(int term) throws ValidationException {
         Date now = new Date();
         Date inTerm = new Date(now.getTime() + term * TO_MS);
         if (inTerm.after(now)) {
@@ -36,7 +38,7 @@ public class Urgency implements Transmittable {
         return factor;
     }
 
-    public void setFactor(double factor) throws ValidationException {
+    private void setFactor(double factor) throws ValidationException {
         this.factor = (Double) Validator.validate(factor, new MoreOrEq<Double>(0.0));
     }
 
@@ -67,19 +69,10 @@ public class Urgency implements Transmittable {
             throw new ValidationException();
         }
     }
-
-    /*
-        public static Urgency getUrgencyByTerm(int term) throws ConnectException, SQLException, ValidationException {
-            ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                    executeQuery(RequestPreparing.select("urgency", new String[]{"*"}, "WHERE Term = " + term));
-            rs.next();
-            return new Urgency(rs);
-        }
-    */
-    @Override
-    public String toXML() {
-        return "<urgency term=\"" + term + "\" factor=\"" + factor + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<urgency term=\"" + term + "\" factor=\"" + factor + "\"/>";
+//    }
 
     @Override
     public String toQuery() {

@@ -12,8 +12,9 @@ import java.sql.SQLException;
 /**
  * Created by bod on 17.09.15.
  */
-public class Stock implements Transmittable {
+public class Stock extends AbstractEntity {
     public static final int ID_NOT_SET = -1;
+    private static final long serialVersionUID = -6189319877877508400L;
     private int id = ID_NOT_SET;
     private int order;
     private int image;
@@ -65,7 +66,7 @@ public class Stock implements Transmittable {
         return id;
     }
 
-    public void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
 
@@ -73,7 +74,7 @@ public class Stock implements Transmittable {
         return order;
     }
 
-    public void setOrder(int order) {
+    private void setOrder(int order) {
         this.order = order;
     }
 
@@ -81,7 +82,7 @@ public class Stock implements Transmittable {
         return image;
     }
 
-    public void setImage(int image) {
+    private void setImage(int image) {
         this.image = image;
     }
 
@@ -89,7 +90,7 @@ public class Stock implements Transmittable {
         return desc;
     }
 
-    public void setDesc(String desc) {
+    private void setDesc(String desc) {
         if (desc != null)
             desc = desc.replace('\'', '"');
         this.desc = desc;
@@ -99,16 +100,16 @@ public class Stock implements Transmittable {
         return format;
     }
 
-    public void setFormat(String format) {
+    private void setFormat(String format) {
         this.format = format.replace('\'', '"');
     }
 
-    @Override
-    public String toXML() {
-        return "<stock id=\"" + id + "\" order=\"" + order + "\" image=\"" + image + "\" " + ((desc == null) ? "" : "desc=\""
-                + desc.replace('"', '\'') + "\"")
-                + " format=\"" + format.replace('"', '\'') + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<stock id=\"" + id + "\" order=\"" + order + "\" image=\"" + image + "\" " + ((desc == null) ? "" : "desc=\""
+//                + desc.replace('"', '\'') + "\"")
+//                + " format=\"" + format.replace('"', '\'') + "\"/>";
+//    }
 
     @Override
     public String toQuery() {

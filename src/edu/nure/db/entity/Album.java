@@ -11,7 +11,8 @@ import java.sql.SQLException;
 /**
  * Created by bod on 07.10.15.
  */
-public class Album implements Transmittable {
+public class Album extends AbstractEntity {
+    private static final long serialVersionUID = -1813733965735193453L;
     private String name;
     private int id;
     private int userId;
@@ -48,7 +49,7 @@ public class Album implements Transmittable {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -56,7 +57,7 @@ public class Album implements Transmittable {
         return id;
     }
 
-    public void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
 
@@ -68,10 +69,10 @@ public class Album implements Transmittable {
         this.userId = userId;
     }
 
-    @Override
-    public String toXML() {
-        return "<album name=\"" + name.replace("\"", "'") + "\" id = \"" + id + "\" userId=\"" + userId + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<album name=\"" + name.replace("\"", "'") + "\" id = \"" + id + "\" userId=\"" + userId + "\"/>";
+//    }
 
     @Override
     public String toQuery() {

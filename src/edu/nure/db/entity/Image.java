@@ -14,8 +14,10 @@ import java.util.Date;
 /**
  * Created by bod on 17.09.15.
  */
-public class Image implements Transmittable {
+public class Image extends AbstractEntity {
+
     public static final int ID_NOT_SET = -1;
+    private static final long serialVersionUID = 5943412076492939426L;
     private int id = ID_NOT_SET;
     private String hash;
     private byte[] image;
@@ -52,7 +54,7 @@ public class Image implements Transmittable {
         return formatter.format(createdIn);
     }
 
-    public void setCreatedIn(Date createdIn) {
+    private void setCreatedIn(Date createdIn) {
         this.createdIn = createdIn;
     }
 
@@ -60,7 +62,7 @@ public class Image implements Transmittable {
         return album;
     }
 
-    public void setAlbum(int album) {
+    private void setAlbum(int album) {
         this.album = album;
     }
 
@@ -68,7 +70,7 @@ public class Image implements Transmittable {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    private void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -76,7 +78,7 @@ public class Image implements Transmittable {
         return hash;
     }
 
-    public void setHash(String hash) {
+    private void setHash(String hash) {
         this.hash = hash;
     }
 
@@ -84,15 +86,15 @@ public class Image implements Transmittable {
         return id;
     }
 
-    public void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
 
-    @Override
-    public String toXML() {
-        return "<image id=\"" + id + "\" hash=\"" + hash + "\" album=\""
-                + album + "\" createdIn=\"" + getCreatedIn() + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<image id=\"" + id + "\" hash=\"" + hash + "\" album=\""
+//                + album + "\" createdIn=\"" + getCreatedIn() + "\"/>";
+//    }
 
     @Override
     public String toQuery() {
@@ -102,14 +104,6 @@ public class Image implements Transmittable {
                 "&createdIn=" + getCreatedIn();
     }
 
-    /*
-        public static Image getImageById(int id)throws ConnectException, SQLException, ValidationException{
-            ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                    executeQuery(RequestPreparing.select("image", new String[]{"*"}, "WHERE Id = " + id));
-            rs.next();
-            return new Image(rs);
-        }
-    */
     public String[] getFields() {
         return new String[]{"Hash", "Album", "CreatedIn", "Image"};
     }

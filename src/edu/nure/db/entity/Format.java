@@ -14,7 +14,9 @@ import java.sql.SQLException;
 /**
  * Created by bod on 17.09.15.
  */
-public class Format implements Transmittable {
+public class Format extends AbstractEntity {
+
+    private static final long serialVersionUID = 1760390489569189641L;
     private String name;
     private int width, height;
     private double price;
@@ -58,7 +60,7 @@ public class Format implements Transmittable {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name.replace('\'', '"');
     }
 
@@ -66,7 +68,7 @@ public class Format implements Transmittable {
         return width;
     }
 
-    public void setWidth(int width) throws ValidationException {
+    private void setWidth(int width) throws ValidationException {
         this.width = (Integer) Validator.validate(width, new MoreOrEq<Integer>(1));
     }
 
@@ -74,26 +76,26 @@ public class Format implements Transmittable {
         return height;
     }
 
-    public void setHeight(int height) throws ValidationException {
+    private void setHeight(int height) throws ValidationException {
         this.height = this.width = (Integer) Validator.validate(height, new MoreOrEq<Integer>(1));
     }
 
-    public double getPrice() {
+    private double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) throws ValidationException {
+    private void setPrice(double price) throws ValidationException {
         this.price = (Double) Validator.validate(price, new MoreOrEq<Double>(0.0));
     }
 
 
-    @Override
-    public String toXML() {
-        return "<format name=\"" + name.replace('"', '\'') + "\" " +
-                "width=\"" + width + "\" " +
-                "height=\"" + height + "\" " +
-                "price=\"" + price + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<format name=\"" + name.replace('"', '\'') + "\" " +
+//                "width=\"" + width + "\" " +
+//                "height=\"" + height + "\" " +
+//                "price=\"" + price + "\"/>";
+//    }
 
     @Override
     public String toQuery() {
@@ -103,13 +105,6 @@ public class Format implements Transmittable {
                 "&price=" + price;
     }
 
-    /*
-        public static Format getFormatByName(String name)throws ConnectException, SQLException, ValidationException{
-            ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                    executeQuery(RequestPreparing.select("format", new String[]{"*"}, "WHERE Name = '" + name+"'"));
-            return new Format(rs);
-        }
-        */
     public String[] getFields() {
         return new String[]{"Name", "Width", "Height", "Price"};
     }

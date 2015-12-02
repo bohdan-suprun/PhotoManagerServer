@@ -14,8 +14,10 @@ import java.util.Objects;
 /**
  * Created by bod on 17.09.15.
  */
-public class User implements Transmittable {
+public class User extends AbstractEntity {
+
     public static final int ID_NOT_SET = -1;
+    private static final long serialVersionUID = -2017219007921547137L;
     private int id = ID_NOT_SET;
     private String phone;
     private String name;
@@ -82,7 +84,7 @@ public class User implements Transmittable {
         return id;
     }
 
-    public void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
 
@@ -90,7 +92,7 @@ public class User implements Transmittable {
         return phone;
     }
 
-    public void setPhone(String phone) throws ValidationException {
+    private void setPhone(String phone) throws ValidationException {
         try {
             this.phone = Objects.requireNonNull(Validator.validate(phone, Validator.PHONE_VALIDATOR));
         } catch (NullPointerException ex) {
@@ -104,7 +106,7 @@ public class User implements Transmittable {
         return name;
     }
 
-    public void setName(String name) throws ValidationException {
+    private void setName(String name) throws ValidationException {
         try {
             this.name = Objects.requireNonNull(Validator.validate(name.replace('"', '\''), Validator.NAME_VALIDATOR))
                     .replace("\'", "\"");
@@ -119,7 +121,7 @@ public class User implements Transmittable {
         return password;
     }
 
-    public void setPassword(String password) {
+    private void setPassword(String password) {
         this.password = password;
     }
 
@@ -127,27 +129,17 @@ public class User implements Transmittable {
         return right;
     }
 
-    public void setRight(Right right) {
+    private void setRight(Right right) {
         this.right = right;
     }
 
-    /*
-    public static User getUserById(int id)throws ConnectException, SQLException, ValidationException{
-        ResultSet rs = Connector.getConnector().getConnection().createStatement().
-                executeQuery(RequestPreparing.select("`user` as U", new String[]{"*"},
-                        RequestPreparing.join("`user_right` AS R", "INNER", "U.Right=R.Type")+"WHERE Id = " + id));
-        rs.next();
-        return new User(rs);
-    }
-    */
-
-    @Override
-    public String toXML() {
-        return "<user " + "id=\"" + id + "\" name=\"" + name.replace('"', '\'') + "\""
-                + " phone=\"" + phone + "\""
-                + ((email == null) ? "" : " email=\"" + email.replace('"', '\'') + "\"")
-                + " right=\"" + right.getType() + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<user " + "id=\"" + id + "\" name=\"" + name.replace('"', '\'') + "\""
+//                + " phone=\"" + phone + "\""
+//                + ((email == null) ? "" : " email=\"" + email.replace('"', '\'') + "\"")
+//                + " right=\"" + right.getType() + "\"/>";
+//    }
 
     @Override
     public String toQuery() {

@@ -12,7 +12,8 @@ import java.util.Objects;
 /**
  * Created by bod on 17.09.15.
  */
-public class Right implements Transmittable {
+public class Right extends AbstractEntity {
+    private static final long serialVersionUID = -9113235862677337231L;
     private String type, desc;
 
     public Right(String type, String desc) {
@@ -43,7 +44,7 @@ public class Right implements Transmittable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(String type) {
         this.type = Objects.requireNonNull(type);
     }
 
@@ -53,16 +54,16 @@ public class Right implements Transmittable {
         return desc;
     }
 
-    public void setDesc(String desc) {
+    private void setDesc(String desc) {
         if (desc != null)
             desc = desc.replace('\'', '"');
         this.desc = desc;
     }
 
-    @Override
-    public String toXML() {
-        return "<right type=\"" + type + "\"" + ((desc == null) ? "" : " desc=\"" + desc + "\"") + "/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<right type=\"" + type + "\"" + ((desc == null) ? "" : " desc=\"" + desc + "\"") + "/>";
+//    }
 
     @Override
     public String toQuery() {

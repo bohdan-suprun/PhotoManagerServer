@@ -14,9 +14,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Order implements Transmittable {
+public class Order extends AbstractEntity {
 
     private static final int ID_NOT_SET = -1;
+    private static final long serialVersionUID = -6206034710156768645L;
     private int id = ID_NOT_SET;
     private int customer, responsible;
     private String desc;
@@ -97,7 +98,7 @@ public class Order implements Transmittable {
         return id;
     }
 
-    public void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
 
@@ -105,7 +106,7 @@ public class Order implements Transmittable {
         return customer;
     }
 
-    public void setCustomer(int customer) {
+    private void setCustomer(int customer) {
         this.customer = customer;
     }
 
@@ -113,7 +114,7 @@ public class Order implements Transmittable {
         return responsible;
     }
 
-    public void setResponsible(int responsible) {
+    private void setResponsible(int responsible) {
         this.responsible = responsible;
     }
 
@@ -121,7 +122,7 @@ public class Order implements Transmittable {
         return desc;
     }
 
-    public void setDesc(String desc) {
+    private void setDesc(String desc) {
         if (desc != null)
             desc = desc.replace('\'', '"');
         this.desc = desc;
@@ -131,7 +132,7 @@ public class Order implements Transmittable {
         return forPay;
     }
 
-    public void setForPay(double forPay) throws ValidationException {
+    private void setForPay(double forPay) throws ValidationException {
         this.forPay = (Double) Validator.validate(forPay, new MoreOrEq<>(0.));
     }
 
@@ -139,7 +140,7 @@ public class Order implements Transmittable {
         return urgency;
     }
 
-    public void setUrgency(int urgency) {
+    private void setUrgency(int urgency) {
         this.urgency = urgency;
     }
 
@@ -147,17 +148,17 @@ public class Order implements Transmittable {
         return term;
     }
 
-    public void setTerm(String term) throws ParseException {
+    private void setTerm(String term) throws ParseException {
         this.term = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(term);
     }
 
-    @Override
-    public String toXML() {
-        return "<order id=\"" + id + "\" customer=\"" + customer + "\" responsible=\"" + responsible + "\"" +
-                ((desc == null) ? "" : " desc=\"" + desc.replace('"', '\'') + "\"") + " term=\"" +
-                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(term) + "\" for_pay=\"" + forPay + "\" status=\"" +
-                status + "\" urgency=\"" + urgency + "\"/>";
-    }
+//    @Override
+//    public String toXML() {
+//        return "<order id=\"" + id + "\" customer=\"" + customer + "\" responsible=\"" + responsible + "\"" +
+//                ((desc == null) ? "" : " desc=\"" + desc.replace('"', '\'') + "\"") + " term=\"" +
+//                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(term) + "\" for_pay=\"" + forPay + "\" status=\"" +
+//                status + "\" urgency=\"" + urgency + "\"/>";
+//    }
 
     @Override
     public String toQuery() {
