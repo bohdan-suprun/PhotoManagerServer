@@ -2,6 +2,7 @@ package edu.nure.db.dao.domains.interfaces;
 
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.exceptions.SelectException;
+import edu.nure.db.entity.InsertedUser;
 import edu.nure.db.entity.User;
 
 import java.util.List;
@@ -25,6 +26,6 @@ public interface UserDAO extends GenericDAO<User> {
 
     User authenticate(String code) throws DBException;
 
-    public String insertCode(User ent) throws DBException;
+    public InsertedUser insertCode(User ent) throws DBException;
 
 }

@@ -17,7 +17,7 @@ import java.util.Date;
 public class Image extends AbstractEntity {
 
     public static final int ID_NOT_SET = -1;
-    private static final long serialVersionUID = 5943412076492939426L;
+    private static final long serialVersionUID = -8876647932366601848L;
     private int id = ID_NOT_SET;
     private String hash;
     private byte[] image;
@@ -54,7 +54,7 @@ public class Image extends AbstractEntity {
         return formatter.format(createdIn);
     }
 
-    private void setCreatedIn(Date createdIn) {
+    public void setCreatedIn(Date createdIn) {
         this.createdIn = createdIn;
     }
 
@@ -62,7 +62,7 @@ public class Image extends AbstractEntity {
         return album;
     }
 
-    private void setAlbum(int album) {
+    public void setAlbum(int album) {
         this.album = album;
     }
 
@@ -70,7 +70,7 @@ public class Image extends AbstractEntity {
         return image;
     }
 
-    private void setImage(byte[] image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -78,7 +78,7 @@ public class Image extends AbstractEntity {
         return hash;
     }
 
-    private void setHash(String hash) {
+    public void setHash(String hash) {
         this.hash = hash;
     }
 
@@ -86,7 +86,7 @@ public class Image extends AbstractEntity {
         return id;
     }
 
-    private void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -104,6 +104,14 @@ public class Image extends AbstractEntity {
                 "&createdIn=" + getCreatedIn();
     }
 
+    /*
+        public static Image getImageById(int id)throws ConnectException, SQLException, ValidationException{
+            ResultSet rs = Connector.getConnector().getConnection().createStatement().
+                    executeQuery(RequestPreparing.select("image", new String[]{"*"}, "WHERE Id = " + id));
+            rs.next();
+            return new Image(rs);
+        }
+    */
     public String[] getFields() {
         return new String[]{"Hash", "Album", "CreatedIn", "Image"};
     }

@@ -5,6 +5,7 @@ import edu.nure.db.dao.domains.interfaces.GenericDAO;
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.entity.Right;
 import edu.nure.performers.exceptions.PerformException;
+import edu.nure.util.ResponseBuilder;
 
 import java.io.IOException;
 

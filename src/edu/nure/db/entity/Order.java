@@ -6,7 +6,7 @@ import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.constraints.Validator;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.db.entity.primarykey.PrimaryKey;
-import edu.nure.performers.ResponseBuilder;
+import edu.nure.util.ResponseBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.util.Date;
 public class Order extends AbstractEntity {
 
     private static final int ID_NOT_SET = -1;
-    private static final long serialVersionUID = -6206034710156768645L;
+    private static final long serialVersionUID = -8661679473647452382L;
     private int id = ID_NOT_SET;
     private int customer, responsible;
     private String desc;

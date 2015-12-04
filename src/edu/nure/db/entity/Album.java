@@ -3,7 +3,7 @@ package edu.nure.db.entity;
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.db.entity.primarykey.PrimaryKey;
-import edu.nure.performers.ResponseBuilder;
+import edu.nure.util.ResponseBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +12,8 @@ import java.sql.SQLException;
  * Created by bod on 07.10.15.
  */
 public class Album extends AbstractEntity {
-    private static final long serialVersionUID = -1813733965735193453L;
+
+    private static final long serialVersionUID = 5728929805742000494L;
     private String name;
     private int id;
     private int userId;
@@ -42,14 +43,13 @@ public class Album extends AbstractEntity {
         this.name = rs.getParameter("name");
         this.id = rs.getIntParameter("id");
         this.userId = rs.getIntParameter("userId");
-        ;
     }
 
     public String getName() {
         return name;
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -57,7 +57,7 @@ public class Album extends AbstractEntity {
         return id;
     }
 
-    private void setId(int id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -76,7 +76,7 @@ public class Album extends AbstractEntity {
 
     @Override
     public String toQuery() {
-        return "name=" + name.replace("\"", "'") + "&id = " + id + "&userId=" + userId;
+        return "name=" + name.replace("\"", "'") + "&id=" + id + "&userId=" + userId;
     }
 
     public String[] getFields() {

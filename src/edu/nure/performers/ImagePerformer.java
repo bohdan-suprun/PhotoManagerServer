@@ -9,6 +9,7 @@ import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.performers.exceptions.PerformException;
+import edu.nure.util.ResponseBuilder;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -69,7 +70,9 @@ public class ImagePerformer extends AbstractPerformer {
             if (builder.getParameter("obj") != null) {
                 try {
                     int id = builder.getIntParameter("id");
-                    builder.add(dao.select(new IntegerPrimaryKey(id)));
+                    edu.nure.db.entity.Image im = dao.select(new IntegerPrimaryKey(id));
+                    im.setImage(null);
+                    builder.add(im);
                 } catch (NumberFormatException ex) {
                     throw new PerformException("Невозможно преобразовать id в число");
                 }
@@ -108,12 +111,14 @@ public class ImagePerformer extends AbstractPerformer {
         int li = builder.getIntParameter("limit");
 
         for (edu.nure.db.entity.Image im : dao.getLike(pHash, li)) {
+            im.setImage(null);
             builder.add(im);
         }
     }
 
     private void getAllImages(int albumId) throws SelectException {
         for (edu.nure.db.entity.Image image : dao.getInAlbum(albumId)) {
+            image.setImage(null);
             builder.add(image);
         }
     }
@@ -130,6 +135,7 @@ public class ImagePerformer extends AbstractPerformer {
                 image = dao.insert(image);
 
                 if (image != null) {
+                    image.setImage(null);
                     builder.add(image);
                     builder.setStatus(ResponseBuilder.STATUS_OK);
                 } else {

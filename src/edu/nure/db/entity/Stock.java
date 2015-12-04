@@ -4,7 +4,7 @@ import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.db.entity.primarykey.PrimaryKey;
-import edu.nure.performers.ResponseBuilder;
+import edu.nure.util.ResponseBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
  */
 public class Stock extends AbstractEntity {
     public static final int ID_NOT_SET = -1;
-    private static final long serialVersionUID = -6189319877877508400L;
+    private static final long serialVersionUID = -2545026856928581510L;
     private int id = ID_NOT_SET;
     private int order;
     private int image;

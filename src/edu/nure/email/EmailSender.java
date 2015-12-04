@@ -5,7 +5,9 @@ import edu.nure.Manager;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 
 public class EmailSender {
@@ -15,8 +17,9 @@ public class EmailSender {
     private Properties props;
 
     public EmailSender() {
-        this.username = "myemail";
-        this.password = "mypass";
+        ResourceBundle rb = ResourceBundle.getBundle("config", new Locale("email"));
+        this.username = rb.getString("email");
+        this.password = rb.getString("pass");
         props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.socketFactory.port", "465");

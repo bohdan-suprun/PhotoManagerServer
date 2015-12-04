@@ -5,6 +5,7 @@ import edu.nure.db.dao.domains.interfaces.UserDAO;
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.exceptions.InsertException;
 import edu.nure.db.dao.exceptions.SelectException;
+import edu.nure.db.entity.InsertedUser;
 import edu.nure.db.entity.User;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 
@@ -132,10 +133,10 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
     }
 
     @Override
-    public String insertCode(User user) throws DBException {
+    public InsertedUser insertCode(User user) throws DBException {
         try (Statement s = connection.createStatement()) {
             connection.setAutoCommit(false);
-            user.setId(newUser(user, s).getId());
+            user = newUser(user, s);
             String autCode = getCode(user);
             String sql = RequestPreparing.insert("aut", new String[]{"Id", "Code"},
                     new Object[]{user.getId(), autCode});
@@ -144,7 +145,7 @@ public class UserDAOImpl extends GenericDAOImpl<User> implements UserDAO {
                 throw new InsertException("Ошибка во время добавления кода авторизации для пользователя");
             }
             connection.commit();
-            return autCode;
+            return new InsertedUser(user, autCode);
         } catch (SQLException ex) {
             throw new DBException(ex);
         } finally {

@@ -5,7 +5,7 @@ import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.constraints.Validator;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.db.entity.primarykey.PrimaryKey;
-import edu.nure.performers.ResponseBuilder;
+import edu.nure.util.ResponseBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.util.Objects;
 public class User extends AbstractEntity {
 
     public static final int ID_NOT_SET = -1;
-    private static final long serialVersionUID = -2017219007921547137L;
+    private static final long serialVersionUID = 5222501006936056025L;
     private int id = ID_NOT_SET;
     private String phone;
     private String name;

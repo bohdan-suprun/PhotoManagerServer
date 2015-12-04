@@ -13,6 +13,7 @@ import java.util.Objects;
  * Created by bod on 17.09.15.
  */
 public class Right extends AbstractEntity {
+
     private static final long serialVersionUID = -9113235862677337231L;
     private String type, desc;
 

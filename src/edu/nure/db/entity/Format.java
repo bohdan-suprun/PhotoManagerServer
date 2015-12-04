@@ -6,7 +6,7 @@ import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.constraints.Validator;
 import edu.nure.db.entity.primarykey.PrimaryKey;
 import edu.nure.db.entity.primarykey.StringPrimaryKey;
-import edu.nure.performers.ResponseBuilder;
+import edu.nure.util.ResponseBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import java.sql.SQLException;
  */
 public class Format extends AbstractEntity {
 
-    private static final long serialVersionUID = 1760390489569189641L;
+    private static final long serialVersionUID = 7601744666950958130L;
     private String name;
     private int width, height;
     private double price;
@@ -60,7 +60,7 @@ public class Format extends AbstractEntity {
         return name;
     }
 
-    private void setName(String name) {
+    public void setName(String name) {
         this.name = name.replace('\'', '"');
     }
 
@@ -68,7 +68,7 @@ public class Format extends AbstractEntity {
         return width;
     }
 
-    private void setWidth(int width) throws ValidationException {
+    public void setWidth(int width) throws ValidationException {
         this.width = (Integer) Validator.validate(width, new MoreOrEq<Integer>(1));
     }
 
@@ -76,19 +76,19 @@ public class Format extends AbstractEntity {
         return height;
     }
 
-    private void setHeight(int height) throws ValidationException {
+    public void setHeight(int height) throws ValidationException {
         this.height = this.width = (Integer) Validator.validate(height, new MoreOrEq<Integer>(1));
     }
 
-    private double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    private void setPrice(double price) throws ValidationException {
+    public void setPrice(double price) throws ValidationException {
         this.price = (Double) Validator.validate(price, new MoreOrEq<Double>(0.0));
     }
 
-
+//
 //    @Override
 //    public String toXML() {
 //        return "<format name=\"" + name.replace('"', '\'') + "\" " +
@@ -105,6 +105,13 @@ public class Format extends AbstractEntity {
                 "&price=" + price;
     }
 
+    /*
+        public static Format getFormatByName(String name)throws ConnectException, SQLException, ValidationException{
+            ResultSet rs = Connector.getConnector().getConnection().createStatement().
+                    executeQuery(RequestPreparing.select("format", new String[]{"*"}, "WHERE Name = '" + name+"'"));
+            return new Format(rs);
+        }
+        */
     public String[] getFields() {
         return new String[]{"Name", "Width", "Height", "Price"};
     }

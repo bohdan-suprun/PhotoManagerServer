@@ -1,4 +1,4 @@
-package edu.nure.performers;
+package edu.nure.util;
 
 import edu.nure.db.entity.Transmittable;
 

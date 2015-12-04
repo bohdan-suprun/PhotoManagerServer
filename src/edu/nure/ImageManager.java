@@ -3,8 +3,8 @@ package edu.nure;
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.performers.Action;
 import edu.nure.performers.ImagePerformer;
-import edu.nure.performers.ResponseBuilder;
 import edu.nure.performers.exceptions.PerformException;
+import edu.nure.util.ResponseBuilder;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 

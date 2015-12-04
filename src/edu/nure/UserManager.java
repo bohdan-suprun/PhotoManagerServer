@@ -3,8 +3,8 @@ package edu.nure;
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.performers.AbstractPerformer;
 import edu.nure.performers.CustomerPerformer;
-import edu.nure.performers.ResponseBuilder;
 import edu.nure.performers.exceptions.PerformException;
+import edu.nure.util.ResponseBuilder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

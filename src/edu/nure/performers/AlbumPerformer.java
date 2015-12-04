@@ -9,6 +9,7 @@ import edu.nure.db.dao.exceptions.SelectException;
 import edu.nure.db.entity.Album;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.performers.exceptions.PerformException;
+import edu.nure.util.ResponseBuilder;
 
 import java.io.IOException;
 
@@ -49,6 +50,7 @@ public class AlbumPerformer extends AbstractPerformer {
             }
             builder.setStatus(ResponseBuilder.STATUS_OK);
         } catch (NumberFormatException ex) {
+            Manager.setLog(ex);
             throw new PerformException("Недостаточно параметров");
         } catch (SelectException ex) {
             Manager.setLog(ex);
@@ -74,6 +76,7 @@ public class AlbumPerformer extends AbstractPerformer {
             builder.setStatus(ResponseBuilder.STATUS_ERROR_WRITE);
             builder.setText(ex.getMessage());
         } catch (NumberFormatException ex) {
+            Manager.setLog(ex);
             throw new PerformException("Недостаточно параметров");
         } catch (DBException ex) {
             Manager.setLog(ex);

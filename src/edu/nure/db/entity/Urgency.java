@@ -6,7 +6,7 @@ import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.constraints.Validator;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.db.entity.primarykey.PrimaryKey;
-import edu.nure.performers.ResponseBuilder;
+import edu.nure.util.ResponseBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class Urgency extends AbstractEntity {
 
-    private static final long serialVersionUID = 6047052170553696156L;
+    private static final long serialVersionUID = -6846444701940860681L;
     private int term;
     private double factor;
     private static final int TO_MS = 60000;

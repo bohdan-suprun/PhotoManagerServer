@@ -6,11 +6,13 @@ import edu.nure.db.dao.domains.interfaces.UserDAO;
 import edu.nure.db.dao.exceptions.DBException;
 import edu.nure.db.dao.exceptions.InsertException;
 import edu.nure.db.dao.exceptions.SelectException;
+import edu.nure.db.entity.InsertedUser;
 import edu.nure.db.entity.User;
 import edu.nure.db.entity.constraints.ValidationException;
 import edu.nure.db.entity.primarykey.IntegerPrimaryKey;
 import edu.nure.email.EmailSender;
 import edu.nure.performers.exceptions.PerformException;
+import edu.nure.util.ResponseBuilder;
 
 import java.io.IOException;
 import java.util.List;
@@ -86,7 +88,9 @@ public class UserPerformer extends AbstractPerformer {
     protected void doInsert() throws PerformException, IOException {
         try {
             User user = new User(builder);
-            String autCode = dao.insertCode(user);
+            InsertedUser insertedUser = dao.insertCode(user);
+            String autCode = insertedUser.getCode();
+            user = insertedUser.getUser();
 
             if (user.getId() != User.ID_NOT_SET && autCode != null) {
                 if (user.getEmail() != null) {
